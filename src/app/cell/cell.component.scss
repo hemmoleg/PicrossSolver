@@ -1,0 +1,49 @@
+//$import "colors.less";
+@use '../../styles.scss';
+
+#cell{
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+
+    background-color: styles.$colorCellBackground;
+
+    border: 2px solid black;
+
+    &.filled{
+        background-color: styles.$color-button-background;
+    }
+}
+
+.similar{
+    border: 2px solid purple !important;
+}
+
+.wc-box{
+    position: relative;
+    top: 1em;
+}
+
+.wc-box div:before,
+.wc-box div:after {
+    content: " ";
+    position: absolute;
+    border-color: #de5985;
+    border-style: solid;
+    border-width: 0 0 5px 0;
+}
+
+.wc-box .close:before,
+.wc-box .close:after {
+    right: 0%;
+    left: 0%;
+    top:calc(50% - 2.5px);
+}
+
+.wc-box .close:before {
+    transform: rotate(45deg);
+}
+
+.wc-box .close:after {
+    transform: rotate(-45deg);
+}

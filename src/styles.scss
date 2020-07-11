@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css?family=Saira:200,400,600&display=swap");
+
+$colorText: #bec0c0;
+
+$colorCellBackground: #cbfaff;
+$colorCellFill: #000000;
+$colorCellCross: #df5985;
+$colorCellCrossBackground: #a0dfe7;
+
+$color-primary: #9e4242;
+$color-button-background: #3e4443;
+$color-button-hover: #7a3a3a;
+$color-button-active: darken($color-primary, 20);
+$color-button-disabled: #313534;
+
+$font-title: "Saira", sans-serif;
+
+body{
+    overflow-y: auto;
+    background-color: #242424;
+}
+
+button{
+    width: 1.3em;
+    height: 1.3em;
+    background: $color-button-background;
+    cursor: pointer;
+    border: none;
+    font-size: 1.5em;
+    color: $colorText;
+
+    &:hover{
+        background: $color-button-hover;
+    }
+    &:active{
+        background: $color-button-active;
+    }
+    &.disabled{
+        margin-top: unset;
+        margin-left: unset;
+        margin-right: unset;
+        background: $color-button-disabled;
+        cursor: default;
+        &.hover{
+            background: $color-button-disabled;
+        }
+        border: 1px solid $color-button-background;
+    }
+    &:focus{
+        outline: unset;
+    }
+}
