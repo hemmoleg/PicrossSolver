@@ -18,6 +18,15 @@ $font-title: "Saira", sans-serif;
 body{
     overflow-y: auto;
     background-color: #242424;
+    color: $colorText;
+}
+
+input{
+    width: 1em;
+    height: 1em;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.7em;
 }
 
 button{

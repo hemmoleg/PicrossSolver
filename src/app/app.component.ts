@@ -6,7 +6,11 @@ import { BlockPlacmentResult } from '../blockPlacementResult';
   selector: 'app-root',
   styleUrls: ['./app.component.scss'],
   template: `
-        <row #row
+        <matrixinput
+            (btnCreateClicked)="btnCreateClicked($event)">
+        </matrixinput>
+
+        <row #row *ngFor="let rowData of rowDatas"
             [rowData]="rowData"
             [editable]="true">
         </row>
@@ -22,15 +26,26 @@ import { BlockPlacmentResult } from '../blockPlacementResult';
 })
 export class AppComponent implements OnInit{
 
-    rowData: CellData[] = [];
+    matrixX: number;
+    matrixY: number;
+    rowDatas: CellData[][] = [];
     displayRows: CellData[][] = [];
     similarities: number[] = [];
 
     ngOnInit()
     {
+        this.matrixX = 5;
+        this.matrixY = 5;
+
         // test
-        for(let i = 0; i < 5; i++)
-            this.rowData.push(new CellData());
+        // for(let i = 0; i < 5; i++)
+        //     this.rowData.push(new CellData());
+    }
+
+    btnCreateClicked(dimensions: number[])
+    {
+        this.rowDatas = new Array(dimensions[1]);
+        this.rowDatas.fill(new Array(dimensions[0]).fill(new CellData()));
     }
 
     calc(blocks: number[], rowData: CellData[])

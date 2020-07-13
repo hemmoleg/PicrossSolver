@@ -22,8 +22,6 @@ import { CellData, CellStatus } from '../../cellData';
                 (click)="onCellClick(i)"
                 (contextmenu)="onCellRightClick(i)">
             </cell>
-            <button *ngIf="editable" (click)="onBtnMinusRowClicked()">-</button>
-            <button *ngIf="editable" (click)="onBtnPlusRowClicked()">+</button>
         </div>
   `,
 })
@@ -43,16 +41,6 @@ export class Row{
     onBtnMinusNumbersClicked()
     {
         this.numbers.pop();
-    }
-
-    onBtnPlusRowClicked()
-    {
-        this.rowData.push(new CellData());
-    }
-
-    onBtnMinusRowClicked()
-    {
-        this.rowData.pop();
     }
 
     onCellClick(clickedIndex: number)
