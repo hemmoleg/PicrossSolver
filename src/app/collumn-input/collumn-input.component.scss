@@ -1,0 +1,17 @@
+.column{
+    // button{
+    //     display: block;
+    // }
+    // input{
+    //     display: block;
+    // }
+    display: inline-flex;
+    flex-direction: column;
+    width: calc(2em + 4px);
+}
+
+.row{
+    width: fit-content;
+    display: inline-block;
+    height: calc(2em + 4px);
+}

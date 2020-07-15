@@ -1,1 +1,55 @@
-@import '../styles.scss';
+@use '../styles.scss';
+
+#flex{
+    display:inline-flex; 
+    flex-wrap:wrap;
+    font-family: styles.$font-title;
+}
+
+.flexChild{
+    flex-basis: 50%;
+}
+
+#topLeftDiv{
+    width:132.75px; 
+    height:100px; 
+    background-color:green;
+}
+#topRightDiv{
+    //text-align: left
+    display: flex;
+    align-items: flex-end;
+}
+#botLeftDiv{
+    text-align: right;
+}
+
+
+// #flex2{
+//     display: flex;
+//     flex-wrap:wrap;
+//     font-family: styles.$font-title;
+//     width: 100vw;
+// }
+
+// #topLeft{
+//     background-color:green;
+//     width: 50%;
+//     min-height: 100px;
+// }
+// #topRight{
+//     background-color:blue;
+//     width: 50%;
+//     min-height: 100px;
+// }
+// #botLeft{
+//     background-color:purple;
+//     width: 50%;
+//     min-height: 100px;
+//     text-align: right;
+// }
+// #botRight{
+//     background-color:rosybrown;
+//     width: 50%;
+//     min-height: 100px;
+// }

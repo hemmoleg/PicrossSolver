@@ -10,18 +10,69 @@ import { BlockPlacmentResult } from '../blockPlacementResult';
             (btnCreateClicked)="btnCreateClicked($event)">
         </matrixinput>
 
-        <row #row *ngFor="let rowData of rowDatas"
+        <!-- <row #row *ngFor="let rowData of rowDatas"
             [rowData]="rowData"
             [editable]="true">
-        </row>
+        </row> -->
+        <!-- <column-input *ngFor="let item of rowDatas[0]"
+            [isColumn]="true">
+        </column-input>
+        <br> -->
+
+        <!-- <div id="flex2">
+            <div id="topLeft">
+            </div>
+            <div id="topRight">
+                <div>
+                    <column-input *ngFor="let item of rowDatas[0]"
+                        [isColumn]="true">
+                    </column-input>
+                </div>
+            </div>
+            <div id="botLeft">
+                <div *ngFor="let item of rowDatas">
+                    <column-input
+                        [isColumn]="false">
+                    </column-input>
+                    <br>
+                </div>
+            </div>
+            <div id="botRight">
+            </div>
+        </div> -->
+
+        <div style="text-align: center">
+            <div id="flex">
+                <div id="topLeftDiv" class="flexChild">
+                </div>
+                <div id="topRightDiv" class="flexChild">
+                    <column-input *ngFor="let item of rowDatas[0]"
+                        [isColumn]="true">
+                    </column-input>
+                </div>
+                <div id="botLeftDiv" class="flexChild">
+                    <div *ngFor="let item of rowDatas">
+                        <column-input
+                            [isColumn]="false">
+                        </column-input>
+                        <br>
+                    </div>
+                </div>
+                <div class="flexChild">
+                    <matrix
+                        [rowDatas]="rowDatas">
+                    </matrix>
+                </div>
+            </div>
+        </div>
+
+        <button>CALC</button>
 
         <row *ngFor="let row of displayRows"
             [rowData]="row"
             [editable]="false"
             [similarities]="similarities">
         </row>
-
-        <button (click)="calc(row.numbers, row.rowData)">CALC</button>
   `
 })
 export class AppComponent implements OnInit{
@@ -44,8 +95,13 @@ export class AppComponent implements OnInit{
 
     btnCreateClicked(dimensions: number[])
     {
-        this.rowDatas = new Array(dimensions[1]);
-        this.rowDatas.fill(new Array(dimensions[0]).fill(new CellData()));
+        this.rowDatas = Array.apply(null, Array(dimensions[1])).map(
+            (value, i1) => Array[i1] = Array.apply(null, Array(dimensions[1])).map(
+                (value, i2) => Array[i2] = new CellData()
+            )
+        );
+
+        //TODO create columnDatas here
     }
 
     calc(blocks: number[], rowData: CellData[])

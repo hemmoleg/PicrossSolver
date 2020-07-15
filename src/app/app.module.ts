@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { Cell } from './cell/cell.component';
 import { Row } from './row/row.component';
 import { MatrixInputComponent } from './matrix-input/matrix-input.component';
+import { CollumnInputComponent } from './collumn-input/collumn-input.component';
+import { MatrixComponent } from './matrix/matrix.component';
 
 @NgModule({
    declarations: [
@@ -13,6 +15,8 @@ import { MatrixInputComponent } from './matrix-input/matrix-input.component';
       Cell,
       Row,
       MatrixInputComponent,
+      CollumnInputComponent,
+      MatrixComponent,
    ],
    imports: [
       BrowserModule,
