@@ -1,14 +1,14 @@
 import { Input, Component} from '@angular/core';
 import { CellData, CellStatus } from '../../cellData';
+import { RowData } from 'src/rowData';
 
 @Component({
   selector: 'row',
   styleUrls: ['./row.component.scss'],
   template: `
     <div id="row"> <!--  value={{numbers[i]}} -->
-        <cell *ngFor="let cellData of rowData; let i = index"
+        <cell *ngFor="let cellData of rowData.cellData; let i = index"
             [cellData]="cellData"
-            [editable]="editable"
             [similiar]="similarities ? similarities.includes(i) : false"
             (click)="onCellClick(i)"
             (contextmenu)="onCellRightClick(i)">
@@ -18,30 +18,32 @@ import { CellData, CellStatus } from '../../cellData';
 })
 export class Row{
 
-    @Input() rowData: CellData[];
+    @Input() rowData: RowData;
     @Input() editable: boolean;
     @Input() similarities: number[];
 
     onCellClick(clickedIndex: number)
     {
+        if(!this.editable) return;
         console.log("onCellClickd", clickedIndex);
-        if(this.rowData[clickedIndex].status == CellStatus.empty){
-            this.rowData[clickedIndex].status = CellStatus.filled;
-            this.rowData[clickedIndex].isHard = true;
+        if(this.rowData.cellData[clickedIndex].status == CellStatus.empty){
+            this.rowData.cellData[clickedIndex].status = CellStatus.filled;
+            this.rowData.cellData[clickedIndex].isHard = true;
         }else{
-            this.rowData[clickedIndex].status = CellStatus.empty;
-            this.rowData[clickedIndex].isHard = false;
+            this.rowData.cellData[clickedIndex].status = CellStatus.empty;
+            this.rowData.cellData[clickedIndex].isHard = false;
         }
     }
 
     onCellRightClick(clickedIndex: number)
     {
-        if(this.rowData[clickedIndex].status == CellStatus.empty){
-            this.rowData[clickedIndex].status = CellStatus.cross;
-            this.rowData[clickedIndex].isHard = true;
+        if(!this.editable) return;
+        if(this.rowData.cellData[clickedIndex].status == CellStatus.empty){
+            this.rowData.cellData[clickedIndex].status = CellStatus.cross;
+            this.rowData.cellData[clickedIndex].isHard = true;
         }else{
-            this.rowData[clickedIndex].status = CellStatus.empty;
-            this.rowData[clickedIndex].isHard = false;
+            this.rowData.cellData[clickedIndex].status = CellStatus.empty;
+            this.rowData.cellData[clickedIndex].isHard = false;
         }
         return false;
     }

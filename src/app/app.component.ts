@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { CellData, CellStatus } from '../cellData';
 import { BlockPlacmentResult } from '../blockPlacementResult';
+import { RowData } from '../rowData';
+import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 
 @Component({
   selector: 'app-root',
@@ -42,20 +44,22 @@ import { BlockPlacmentResult } from '../blockPlacementResult';
         </div> -->
 
         <div style="text-align: center">
-            <div id="flex">
+            <div *ngIf="rowDatas.length > 0" id="flex">
                 <div id="topLeftDiv" class="flexChild">
                 </div>
                 <div id="topRightDiv" class="flexChild">
-                    <column-input *ngFor="let item of rowDatas[0]"
-                        [isColumn]="true">
-                    </column-input>
+                    <column-row-input #columnInput
+                        *ngFor="let item of rowDatas[0].cellData; let i = index;"
+                        [isColumn]="true"
+                        [index]="i">
+                    </column-row-input>
                 </div>
                 <div id="botLeftDiv" class="flexChild">
-                    <div *ngFor="let item of rowDatas">
-                        <column-input
-                            [isColumn]="false">
-                        </column-input>
-                        <br>
+                    <div *ngFor="let item of rowDatas; let i = index;">
+                        <column-row-input #rowInput
+                            [isColumn]="false"
+                            [index]="i">
+                        </column-row-input>
                     </div>
                 </div>
                 <div class="flexChild">
@@ -66,12 +70,11 @@ import { BlockPlacmentResult } from '../blockPlacementResult';
             </div>
         </div>
 
-        <button>CALC</button>
+        <button (click)="metaCalc()">CALC</button>
 
         <row *ngFor="let row of displayRows"
             [rowData]="row"
-            [editable]="false"
-            [similarities]="similarities">
+            [editable]=false>
         </row>
   `
 })
@@ -79,35 +82,70 @@ export class AppComponent implements OnInit{
 
     matrixX: number;
     matrixY: number;
-    rowDatas: CellData[][] = [];
-    displayRows: CellData[][] = [];
-    similarities: number[] = [];
+    rowDatas: RowData[] = [];
+    //displayRows: CellData[][] = [];
+    displayRows: RowData[] = [];
+    //similarities: number[] = [];
+
+    @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
+    @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
 
     ngOnInit()
     {
-        this.matrixX = 5;
-        this.matrixY = 5;
-
-        // test
-        // for(let i = 0; i < 5; i++)
-        //     this.rowData.push(new CellData());
+        let cs: CellStatus;
+        console.log(cs == null);
     }
 
     btnCreateClicked(dimensions: number[])
     {
-        this.rowDatas = Array.apply(null, Array(dimensions[1])).map(
-            (value, i1) => Array[i1] = Array.apply(null, Array(dimensions[1])).map(
-                (value, i2) => Array[i2] = new CellData()
-            )
+        // this.rowDatas = Array.apply(null, Array(dimensions[1])).map(
+        //     (value, i1) => Array[i1] = Array.apply(null, Array(dimensions[1])).map(
+        //         (value, i2) => Array[i2] = new CellData()
+        //     )
+        // );
+
+        // Array.apply(null, Array(dimensions[1])).map((value, i2) => Array[i2] = new CellData())
+
+        this.matrixX = dimensions[0];
+        this.matrixY = dimensions[1];
+        this.rowDatas = Array.apply(null, Array(dimensions[0])).map(
+            (value, i1) => Array[i1] = new RowData(Array.apply(null, Array(dimensions[1])).map((value, i2) => Array[i2] = new CellData()))
         );
+
+        console.log(this.rowDatas);
 
         //TODO create columnDatas here
     }
 
-    calc(blocks: number[], rowData: CellData[])
+    metaCalc()
     {
-        this.displayRows = [];
+        this.columnInputs.forEach(i => console.log(i.numbers));
+        this.rowInputs.forEach(i => console.log(i.numbers));
 
+        //first rows 0 -> 4
+        for(let i = 0; i < this.rowInputs.length; i++)
+        {
+            const similiarities = this.calc(this.rowInputs.toArray()[i].numbers, this.rowDatas[i].cellData);
+            const rowData = new RowData(similiarities);//this.similiaritiesToRowData(similiarities);
+            this.displayRows.push(rowData);
+        }
+
+        //next columns 0 -> 4
+        const columns = this.displayRowsToColumns();
+        const columnDatas: RowData[] = [];
+        for(let i = 0; i < columns.length; i++)
+        {
+            const similiarities = this.calc(this.columnInputs.toArray()[i].numbers, columns[i].cellData);
+            //columnDatas.push( this.similiaritiesToRowData(similiarities) );
+            columnDatas.push( new RowData(similiarities) );
+        }
+        const rowDatas = this.columnDatasToRowData(columnDatas);
+        this.displayRows = this.displayRows.concat(rowDatas);
+
+    }
+
+    calc(blocks: number[], rowData: CellData[]): CellData[]
+    {
         blocks = blocks.filter(val => val > 0);
 
         let results: BlockPlacmentResult[] = [new BlockPlacmentResult(rowData, 0)];
@@ -118,11 +156,26 @@ export class AppComponent implements OnInit{
         results = results.filter(result => result.numCellsFilled == numCellsRequired);
         results = results.filter(result => this.checkAllBlocksSeperatedByCrosses(result, blocks));
 
-        results.forEach(result => this.displayRows.push(result.testRow));
-        //results.forEach(res => this.displayRows.push(this.fillEmptyTilesWithCrosses(res.testRow)));
+        if(results.length == 0)
+        {
+            console.error('No results found for blocks', blocks, 'and rowData', rowData);
+            return;
+        }
 
-        this.similarities = this.findSimilarities(results);
-        console.log(this.similarities);
+        const similarities = this.findSimilarities(results);
+        console.log('similiarities', similarities);
+        return similarities;
+    }
+
+    similiaritiesToRowData(similarities: number[]): RowData
+    {
+        //TODO find switch between matrixX and matrixY for RowData constructor argument
+        if(similarities.length > 0)
+            return new RowData(null, similarities, this.matrixX);
+        else
+            return new RowData(Array.apply(null, Array(this.matrixX)).map((value, i2) => Array[i2] = new CellData()));
+
+        //TODO add result when blocks is empty or only includes 0's
     }
 
     findPositionsForBlock(blocks: number[], blockIndex: number, resultsBefore: BlockPlacmentResult[])
@@ -289,35 +342,90 @@ export class AppComponent implements OnInit{
         return true;
     }
 
-    findSimilarities(results: BlockPlacmentResult[]): number[]
+    findSimilarities(results: BlockPlacmentResult[]): CellData[]
     {
-        const similarities: number[] = [];
+        const similarities: CellData[] = [];
+
+        // if(results.length == 1)
+        // {
+        //     results[0].testRow.forEach((value, i) => {
+        //         if(value.status == CellStatus.filled)
+        //             similarities.push(i);
+        //     });
+        //     return similarities;
+        // }
+
         for(let i = 0; i < results[0].testRow.length; i++)
         {
-            if(results[0].testRow[i].isHard)
-                continue;
-
-            let same = true;
-
-            results.forEach(result1 => {
-                if(!same)
-                {
-                    return;
-                }
-                results.forEach(result2 => {
-                    if(result1.testRow[i].status != result2.testRow[i].status)
-                    {
-                        same = false;
-                        return;
-                    }
-                })
-            })
-
-            if(same)
-                similarities.push(i);
+            let cellStatus: CellStatus;
+            results.forEach(result => {
+                if(cellStatus == null)
+                    cellStatus = result.testRow[i].status;
+                else if(cellStatus != result.testRow[i].status)
+                    cellStatus = CellStatus.empty;
+            });
+            const cd = new CellData();
+            cd.status = cellStatus;
+            cd.isHard = cellStatus != CellStatus.empty;
+            similarities.push(cd);
         }
 
+        // for(let i = 0; i < results[0].testRow.length; i++)
+        // {
+        //     // if(results[0].testRow[i].isHard)
+        //     //     continue;
+
+        //     let same = true;
+
+        //     results.forEach(result1 => {
+        //         if(!same)
+        //         {
+        //             return;
+        //         }
+        //         results.forEach(result2 => {
+        //             if(result1.testRow[i].status != result2.testRow[i].status)
+        //             {
+        //                 same = false;
+        //                 return;
+        //             }
+        //         })
+        //     })
+
+        //     if(same)
+        //         similarities.push(i);
+        // }
+
         return similarities;
+    }
+
+    displayRowsToColumns(): RowData[]
+    {
+        const columns: RowData[] = [];
+        for(let i = 0; i < this.matrixX; i++)
+        {
+            columns.push(new RowData());
+            for(let j = 0; j < this.matrixY; j++)
+            {
+                columns[columns.length - 1].cellData[j] = this.displayRows[j].cellData[i];
+            }
+        }
+        console.log('resultsToColumns', columns);
+        return columns;
+    }
+
+    columnDatasToRowData(columnDatas: RowData[]): RowData[]
+    {
+        const rows: RowData[] = [];
+        for(let i = 0; i < this.matrixX; i++)
+        {
+            rows.push(new RowData());
+            for(let j = 0; j < this.matrixY; j++)
+            {
+                rows[rows.length - 1].cellData[j] = columnDatas[j].cellData[i];
+            }
+        }
+        console.log('resultsToColumns', rows);
+        return rows;
     }
 
     fillEmptyTilesWithCrosses(rowData: CellData[]): CellData[]

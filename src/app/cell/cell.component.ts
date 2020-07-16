@@ -18,7 +18,6 @@ import {CellData, CellStatus} from '../../cellData';
 export class Cell{
 
   @Input() cellData: CellData;
-  @Input() editable: boolean;
   @Input() similiar: boolean;
 
   cellStatus = CellStatus;

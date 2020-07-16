@@ -1,7 +1,7 @@
 import { CellData, CellStatus } from './cellData';
 
 export class BlockPlacmentResult{
-    
+
     constructor(public testRow: CellData[], 
             public continueAtIndex: number){}
 

@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { Cell } from './cell/cell.component';
 import { Row } from './row/row.component';
 import { MatrixInputComponent } from './matrix-input/matrix-input.component';
-import { CollumnInputComponent } from './collumn-input/collumn-input.component';
+import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 import { MatrixComponent } from './matrix/matrix.component';
 
 @NgModule({
@@ -15,7 +15,7 @@ import { MatrixComponent } from './matrix/matrix.component';
       Cell,
       Row,
       MatrixInputComponent,
-      CollumnInputComponent,
+      CollumnRowInputComponent,
       MatrixComponent,
    ],
    imports: [

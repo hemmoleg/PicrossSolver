@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CollumnInputComponent } from './collumn-input.component';
+import { CollumnRowInputComponent } from './collumn-row-input.component';
 
 describe('CollumnInputComponent', () => {
-  let component: CollumnInputComponent;
-  let fixture: ComponentFixture<CollumnInputComponent>;
+  let component: CollumnRowInputComponent;
+  let fixture: ComponentFixture<CollumnRowInputComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CollumnInputComponent ]
+      declarations: [ CollumnRowInputComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CollumnInputComponent);
+    fixture = TestBed.createComponent(CollumnRowInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
