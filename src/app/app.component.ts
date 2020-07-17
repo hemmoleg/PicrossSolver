@@ -122,26 +122,46 @@ export class AppComponent implements OnInit{
         this.columnInputs.forEach(i => console.log(i.numbers));
         this.rowInputs.forEach(i => console.log(i.numbers));
 
-        //first rows 0 -> 4
-        for(let i = 0; i < this.rowInputs.length; i++)
-        {
-            const similiarities = this.calc(this.rowInputs.toArray()[i].numbers, this.rowDatas[i].cellData);
-            const rowData = new RowData(similiarities);//this.similiaritiesToRowData(similiarities);
-            this.displayRows.push(rowData);
-        }
+        const rowInputsArray = this.rowInputs.toArray();
+        const columnInputsArray = this.columnInputs.toArray();
 
-        //next columns 0 -> 4
-        const columns = this.displayRowsToColumns();
-        const columnDatas: RowData[] = [];
-        for(let i = 0; i < columns.length; i++)
-        {
-            const similiarities = this.calc(this.columnInputs.toArray()[i].numbers, columns[i].cellData);
-            //columnDatas.push( this.similiaritiesToRowData(similiarities) );
-            columnDatas.push( new RowData(similiarities) );
-        }
-        const rowDatas = this.columnDatasToRowData(columnDatas);
-        this.displayRows = this.displayRows.concat(rowDatas);
+        let rowDatasForCalculcaltion = this.rowDatas;
+        let iterationCounter = 0;
 
+        //for(let j = 0; j < 2; j++)
+        do
+        {
+            iterationCounter++;
+            //first rows 0 -> 4
+            for(let i = 0; i < this.rowInputs.length; i++)
+            {
+                const similiarities = this.calc(rowInputsArray[i].numbers, rowDatasForCalculcaltion[i].cellData);
+                const rowData = new RowData(similiarities);
+                this.displayRows.push(rowData);
+            }
+
+            //next columns 0 -> 4
+            const columns = this.rowDatasToColumnDatas(this.displayRows.slice(Math.max(this.displayRows.length - this.matrixY, 0)));
+            const columnDatas: RowData[] = [];
+            for(let i = 0; i < columns.length; i++)
+            {
+                const similiarities = this.calc(columnInputsArray[i].numbers, columns[i].cellData);
+                columnDatas.push( new RowData(similiarities) );
+            }
+            const rowDatas = this.columnDatasToRowDatas(columnDatas);
+            this.displayRows = this.displayRows.concat(rowDatas);
+
+            rowDatasForCalculcaltion = rowDatas;
+
+            if(iterationCounter >= 10)
+            {
+                console.log('iterationCounter reached 10. Aborting metaCalc');
+                return;
+            }
+
+        }while(!rowDatasForCalculcaltion.every((row, i) => this.allBlocksPresent(row.cellData, rowInputsArray[i].numbers)));
+    
+        console.log('Solved after', iterationCounter, 'iterations');
     }
 
     calc(blocks: number[], rowData: CellData[]): CellData[]
@@ -346,15 +366,6 @@ export class AppComponent implements OnInit{
     {
         const similarities: CellData[] = [];
 
-        // if(results.length == 1)
-        // {
-        //     results[0].testRow.forEach((value, i) => {
-        //         if(value.status == CellStatus.filled)
-        //             similarities.push(i);
-        //     });
-        //     return similarities;
-        // }
-
         for(let i = 0; i < results[0].testRow.length; i++)
         {
             let cellStatus: CellStatus;
@@ -370,35 +381,10 @@ export class AppComponent implements OnInit{
             similarities.push(cd);
         }
 
-        // for(let i = 0; i < results[0].testRow.length; i++)
-        // {
-        //     // if(results[0].testRow[i].isHard)
-        //     //     continue;
-
-        //     let same = true;
-
-        //     results.forEach(result1 => {
-        //         if(!same)
-        //         {
-        //             return;
-        //         }
-        //         results.forEach(result2 => {
-        //             if(result1.testRow[i].status != result2.testRow[i].status)
-        //             {
-        //                 same = false;
-        //                 return;
-        //             }
-        //         })
-        //     })
-
-        //     if(same)
-        //         similarities.push(i);
-        // }
-
         return similarities;
     }
 
-    displayRowsToColumns(): RowData[]
+    rowDatasToColumnDatas(rowDatas: RowData[]): RowData[]
     {
         const columns: RowData[] = [];
         for(let i = 0; i < this.matrixX; i++)
@@ -406,14 +392,14 @@ export class AppComponent implements OnInit{
             columns.push(new RowData());
             for(let j = 0; j < this.matrixY; j++)
             {
-                columns[columns.length - 1].cellData[j] = this.displayRows[j].cellData[i];
+                columns[columns.length - 1].cellData[j] = rowDatas[j].cellData[i];
             }
         }
         console.log('resultsToColumns', columns);
         return columns;
     }
 
-    columnDatasToRowData(columnDatas: RowData[]): RowData[]
+    columnDatasToRowDatas(columnDatas: RowData[]): RowData[]
     {
         const rows: RowData[] = [];
         for(let i = 0; i < this.matrixX; i++)
