@@ -24,8 +24,8 @@ export class MatrixInputComponent{
     @Output() btnCreateClicked = new EventEmitter<number[]>();
 
     constructor() { 
-        this.matrixX = 5;
-        this.matrixY = 5;
+        this.matrixX = 20;
+        this.matrixY = 20;
     }
 
     onKeyUp(event: any, isX: boolean)

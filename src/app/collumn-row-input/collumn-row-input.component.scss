@@ -6,12 +6,15 @@
     //     display: block;
     // }
     display: inline-flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
     width: calc(2em + 4px);
 }
 
 .row{
+    display: inline-flex;
+    align-items: center;
     width: fit-content;
-    display: inline-block;
     height: calc(2em + 4px);
 }

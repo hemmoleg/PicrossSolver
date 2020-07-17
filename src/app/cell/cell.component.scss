@@ -2,7 +2,6 @@
 @use '../../styles.scss';
 
 #cell{
-    display: inline-block;
     width: 2em;
     height: 2em;
 
@@ -13,6 +12,20 @@
     &.filled{
         background-color: styles.$color-button-background;
     }
+
+    &.isFithColumn{
+        border-right: 2px solid red;
+    }
+    &.isSixthColumn{
+        border-left: 2px solid red;
+    }
+    &.isFithRow{
+        border-bottom: 2px solid red;
+    }
+    &.isSixthRow{
+        border-top: 2px solid red;
+    }
+    
 }
 
 .similar{

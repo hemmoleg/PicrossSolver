@@ -5,10 +5,13 @@ import { CellData } from 'src/cellData';
     selector: 'matrix',
     styleUrls: ['./matrix.component.scss'],
     template: `
-        <div id="matrixContainer">
-            <row #row *ngFor="let rowData of rowDatas"
+        <div id="matrixContainer"
+            [class.isResult]="isResult">
+            <row #row *ngFor="let rowData of rowDatas, let i = index"
                 [rowData]="rowData"
-                [editable]="true">
+                [isEditable]="isEditable"
+                [isFithRow]="(i+1) % 5 == 0 && i < rowDatas.length-1"
+                [isSixthRow]="(i) % 5 == 0 && i != 0">
             </row>
         </div>
     `
@@ -16,6 +19,8 @@ import { CellData } from 'src/cellData';
 export class MatrixComponent{
 
     @Input() rowDatas: CellData[][];
+    @Input() isEditable: boolean;
+    @Input() isResult: true;
 
     constructor() { }
 

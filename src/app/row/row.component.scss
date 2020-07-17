@@ -3,7 +3,6 @@
 #row{
     display: flex;
     width: 100%;
-    margin-bottom: -7px;
 }
 
 #rowControls{
@@ -11,12 +10,4 @@
     justify-content: flex-end;
     margin-right: 1em;
     min-width: 25vw;
-}
-
-cell:nth-of-type(5n+5){
-    border-right: 3px solid red;
-
-    &:last-of-type{
-        border-right: unset;
-    }
 }

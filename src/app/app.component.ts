@@ -6,11 +6,18 @@ import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.
 
 @Component({
   selector: 'app-root',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss', './cell/cell.component.scss'],
   template: `
         <matrixinput
             (btnCreateClicked)="btnCreateClicked($event)">
         </matrixinput>
+
+        <!-- <cell></cell>
+
+        <div>
+            <div id="cell">
+            </div>
+        </div> -->
 
         <!-- <row #row *ngFor="let rowData of rowDatas"
             [rowData]="rowData"
@@ -64,7 +71,8 @@ import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.
                 </div>
                 <div class="flexChild">
                     <matrix
-                        [rowDatas]="rowDatas">
+                        [rowDatas]="rowDatas"
+                        [isEditable]="true">
                     </matrix>
                 </div>
             </div>
@@ -72,10 +80,14 @@ import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.
 
         <button (click)="metaCalc()">CALC</button>
 
-        <row *ngFor="let row of displayRows"
-            [rowData]="row"
-            [editable]=false>
-        </row>
+        <div *ngFor="let resultMatrix of resultMatrices, let i = index">
+            Iteration: {{i+1}}
+            <matrix
+                [rowDatas]="resultMatrix"
+                [isEditable]="true"
+                [isResult]="true">
+            </matrix>
+        </div>
   `
 })
 export class AppComponent implements OnInit{
@@ -83,17 +95,19 @@ export class AppComponent implements OnInit{
     matrixX: number;
     matrixY: number;
     rowDatas: RowData[] = [];
-    //displayRows: CellData[][] = [];
     displayRows: RowData[] = [];
-    //similarities: number[] = [];
+
+    resultMatrices: RowData[][] = [];
 
     @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
     @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
 
     ngOnInit()
     {
-        let cs: CellStatus;
-        console.log(cs == null);
+        //allBlocksPresent(testRow: CellData[], blocks: number[]):
+        // let testRow = [new CellData(), new CellData(), new CellData(), new CellData(), new CellData()];
+        // let blocks = [0];
+        // console.log(this.allBlocksPresent(testRow, blocks));
     }
 
     btnCreateClicked(dimensions: number[])
@@ -128,20 +142,25 @@ export class AppComponent implements OnInit{
         let rowDatasForCalculcaltion = this.rowDatas;
         let iterationCounter = 0;
 
-        //for(let j = 0; j < 2; j++)
         do
         {
             iterationCounter++;
-            //first rows 0 -> 4
+            let resultMatrix: RowData[] = [];
+            //first rows
             for(let i = 0; i < this.rowInputs.length; i++)
             {
                 const similiarities = this.calc(rowInputsArray[i].numbers, rowDatasForCalculcaltion[i].cellData);
                 const rowData = new RowData(similiarities);
-                this.displayRows.push(rowData);
+                //this.displayRows.push(rowData);
+                resultMatrix.push(rowData);
             }
+            this.resultMatrices.push(resultMatrix);
 
-            //next columns 0 -> 4
-            const columns = this.rowDatasToColumnDatas(this.displayRows.slice(Math.max(this.displayRows.length - this.matrixY, 0)));
+            //TODO add check here if riddle is solved already
+
+            //next columns
+            //const columns = this.rowDatasToColumnDatas(this.displayRows.slice(Math.max(this.displayRows.length - this.matrixY, 0)));
+            const columns = this.rowDatasToColumnDatas(resultMatrix);
             const columnDatas: RowData[] = [];
             for(let i = 0; i < columns.length; i++)
             {
@@ -149,25 +168,24 @@ export class AppComponent implements OnInit{
                 columnDatas.push( new RowData(similiarities) );
             }
             const rowDatas = this.columnDatasToRowDatas(columnDatas);
-            this.displayRows = this.displayRows.concat(rowDatas);
+            //this.displayRows = this.displayRows.concat(rowDatas);
+            this.resultMatrices.push(rowDatas);
 
             rowDatasForCalculcaltion = rowDatas;
 
-            if(iterationCounter >= 10)
+            if(iterationCounter >= 20)
             {
-                console.log('iterationCounter reached 10. Aborting metaCalc');
+                console.log('iterationCounter reached 20. Aborting metaCalc');
                 return;
             }
 
         }while(!rowDatasForCalculcaltion.every((row, i) => this.allBlocksPresent(row.cellData, rowInputsArray[i].numbers)));
-    
+
         console.log('Solved after', iterationCounter, 'iterations');
     }
 
     calc(blocks: number[], rowData: CellData[]): CellData[]
     {
-        blocks = blocks.filter(val => val > 0);
-
         let results: BlockPlacmentResult[] = [new BlockPlacmentResult(rowData, 0)];
         for(let i = 0; i < blocks.length; i++)
             results = this.findPositionsForBlock(blocks, i, results);
@@ -183,7 +201,7 @@ export class AppComponent implements OnInit{
         }
 
         const similarities = this.findSimilarities(results);
-        console.log('similiarities', similarities);
+        //console.log('similiarities', similarities);
         return similarities;
     }
 
@@ -295,6 +313,9 @@ export class AppComponent implements OnInit{
 
     allBlocksPresent(testRow: CellData[], blocks: number[]): boolean
     {
+        if(0 == blocks.reduce((accumulator, currentValue) => accumulator + currentValue))
+            return true;
+
         let continueAtIndex = 0;
         for(let i = 0; i < blocks.length; i++)
         {
