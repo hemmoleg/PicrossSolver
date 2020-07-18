@@ -17,4 +17,11 @@ export class RowData{
                 }
             }
     }
+
+    getCellsFilledOrCrossedCount(): number
+    {
+        let cellsFilledOrCrossedCount = 0;
+        this.cellData.forEach(cell => cell.status == CellStatus.filled || cell.status == CellStatus.cross ? cellsFilledOrCrossedCount++ : undefined);
+        return cellsFilledOrCrossedCount;
+    }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { CellData, CellStatus } from '../cellData';
 import { BlockPlacmentResult } from '../blockPlacementResult';
 import { RowData } from '../rowData';
+import { ResultMatrices } from '../resultMatrices';
 import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 
 @Component({
@@ -80,7 +81,7 @@ import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.
 
         <button (click)="metaCalc()">CALC</button>
 
-        <div *ngFor="let resultMatrix of resultMatrices, let i = index">
+        <div *ngFor="let resultMatrix of resultMatrices.resultMatrices | slice: 1, let i = index">
             Iteration: {{i+1}}
             <matrix
                 [rowDatas]="resultMatrix"
@@ -97,29 +98,18 @@ export class AppComponent implements OnInit{
     rowDatas: RowData[] = [];
     displayRows: RowData[] = [];
 
-    resultMatrices: RowData[][] = [];
+    //resultMatrices: RowData[][] = [];
+    resultMatrices: ResultMatrices = new ResultMatrices();
 
     @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
     @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
 
     ngOnInit()
     {
-        //allBlocksPresent(testRow: CellData[], blocks: number[]):
-        // let testRow = [new CellData(), new CellData(), new CellData(), new CellData(), new CellData()];
-        // let blocks = [0];
-        // console.log(this.allBlocksPresent(testRow, blocks));
     }
 
     btnCreateClicked(dimensions: number[])
     {
-        // this.rowDatas = Array.apply(null, Array(dimensions[1])).map(
-        //     (value, i1) => Array[i1] = Array.apply(null, Array(dimensions[1])).map(
-        //         (value, i2) => Array[i2] = new CellData()
-        //     )
-        // );
-
-        // Array.apply(null, Array(dimensions[1])).map((value, i2) => Array[i2] = new CellData())
-
         this.matrixX = dimensions[0];
         this.matrixY = dimensions[1];
         this.rowDatas = Array.apply(null, Array(dimensions[0])).map(
@@ -127,64 +117,67 @@ export class AppComponent implements OnInit{
         );
 
         console.log(this.rowDatas);
-
-        //TODO create columnDatas here
     }
 
     metaCalc()
     {
-        this.columnInputs.forEach(i => console.log(i.numbers));
-        this.rowInputs.forEach(i => console.log(i.numbers));
-
         const rowInputsArray = this.rowInputs.toArray();
         const columnInputsArray = this.columnInputs.toArray();
 
-        let rowDatasForCalculcaltion = this.rowDatas;
         let iterationCounter = 0;
+        let findSimilaritiesInRows = true;
+        let resultMatrix: RowData[] = [];
+        let cellsFilledOrCrossedCountBefore = 0;
+
+        this.resultMatrices.push(this.rowDatas);
 
         do
         {
             iterationCounter++;
-            let resultMatrix: RowData[] = [];
-            //first rows
-            for(let i = 0; i < this.rowInputs.length; i++)
+            if(findSimilaritiesInRows)
             {
-                const similiarities = this.calc(rowInputsArray[i].numbers, rowDatasForCalculcaltion[i].cellData);
-                const rowData = new RowData(similiarities);
-                //this.displayRows.push(rowData);
-                resultMatrix.push(rowData);
+                resultMatrix = [];
+
+                //first rows
+                for(let i = 0; i < this.rowInputs.length; i++)
+                {
+                    const similiarities = this.findSimiliarities(rowInputsArray[i].numbers, this.resultMatrices.last()[i].cellData);
+                    const rowData = new RowData(similiarities);
+                    resultMatrix.push(rowData);
+                }
+                this.resultMatrices.push(resultMatrix);
+                findSimilaritiesInRows = false;
             }
-            this.resultMatrices.push(resultMatrix);
-
-            //TODO add check here if riddle is solved already
-
-            //next columns
-            //const columns = this.rowDatasToColumnDatas(this.displayRows.slice(Math.max(this.displayRows.length - this.matrixY, 0)));
-            const columns = this.rowDatasToColumnDatas(resultMatrix);
-            const columnDatas: RowData[] = [];
-            for(let i = 0; i < columns.length; i++)
+            else
             {
-                const similiarities = this.calc(columnInputsArray[i].numbers, columns[i].cellData);
-                columnDatas.push( new RowData(similiarities) );
+                //next columns
+                const lastResultAsColumns = this.rowDatasToColumnDatas(this.resultMatrices.last());
+                const resultColumnDatas: RowData[] = [];
+                for(let i = 0; i < lastResultAsColumns.length; i++)
+                {
+                    const similiarities = this.findSimiliarities(columnInputsArray[i].numbers, lastResultAsColumns[i].cellData);
+                    resultColumnDatas.push( new RowData(similiarities) );
+                }
+                resultMatrix = this.columnDatasToRowDatas(resultColumnDatas);
+                this.resultMatrices.push(resultMatrix);
+
+                findSimilaritiesInRows = true;
             }
-            const rowDatas = this.columnDatasToRowDatas(columnDatas);
-            //this.displayRows = this.displayRows.concat(rowDatas);
-            this.resultMatrices.push(rowDatas);
 
-            rowDatasForCalculcaltion = rowDatas;
-
-            if(iterationCounter >= 20)
+            const cellsFilledOrCrossedCount = this.getCellsFilledOrCrossedCount( this.resultMatrices.last() );
+            if(cellsFilledOrCrossedCountBefore >= cellsFilledOrCrossedCount)
             {
-                console.log('iterationCounter reached 20. Aborting metaCalc');
+                console.error('no new cells were filled in current iterartion. aborting...');
                 return;
             }
+            cellsFilledOrCrossedCountBefore = cellsFilledOrCrossedCount;
 
-        }while(!rowDatasForCalculcaltion.every((row, i) => this.allBlocksPresent(row.cellData, rowInputsArray[i].numbers)));
+        }while(!this.resultMatrices.last().every((row, i) => this.allBlocksPresent(row.cellData, rowInputsArray[i].numbers)));
 
         console.log('Solved after', iterationCounter, 'iterations');
     }
 
-    calc(blocks: number[], rowData: CellData[]): CellData[]
+    findSimiliarities(blocks: number[], rowData: CellData[]): CellData[]
     {
         let results: BlockPlacmentResult[] = [new BlockPlacmentResult(rowData, 0)];
         for(let i = 0; i < blocks.length; i++)
@@ -192,7 +185,7 @@ export class AppComponent implements OnInit{
 
         const numCellsRequired = blocks.reduce((accumulator, currentValue) => accumulator + currentValue);
         results = results.filter(result => result.numCellsFilled == numCellsRequired);
-        results = results.filter(result => this.checkAllBlocksSeperatedByCrosses(result, blocks));
+        results = results.filter(result => this.allBlocksSeperatedByCrosses(result, blocks));
 
         if(results.length == 0)
         {
@@ -200,20 +193,8 @@ export class AppComponent implements OnInit{
             return;
         }
 
-        const similarities = this.findSimilarities(results);
-        //console.log('similiarities', similarities);
+        const similarities = this.getSimilarities(results);
         return similarities;
-    }
-
-    similiaritiesToRowData(similarities: number[]): RowData
-    {
-        //TODO find switch between matrixX and matrixY for RowData constructor argument
-        if(similarities.length > 0)
-            return new RowData(null, similarities, this.matrixX);
-        else
-            return new RowData(Array.apply(null, Array(this.matrixX)).map((value, i2) => Array[i2] = new CellData()));
-
-        //TODO add result when blocks is empty or only includes 0's
     }
 
     findPositionsForBlock(blocks: number[], blockIndex: number, resultsBefore: BlockPlacmentResult[])
@@ -239,6 +220,7 @@ export class AppComponent implements OnInit{
                     //place cross BEFORE block
                     if(testRow[startIndex - 1] && !testRow[startIndex - 1].isHard)
                         testRow[startIndex - 1].status = CellStatus.cross;
+
                     //place cross AFTER block
                     if(testRow[startIndex + blocks[blockIndex]] && !testRow[startIndex + blocks[blockIndex]].isHard)
                         testRow[startIndex + blocks[blockIndex]].status = CellStatus.cross;
@@ -254,13 +236,11 @@ export class AppComponent implements OnInit{
                     results.push(new BlockPlacmentResult(testRow, startIndex + blocks[blockIndex] + 1));
                 }
 
-                if(blockIndex < blocks.length -1)
+                if(blockIndex < blocks.length - 1)
                 {
                     hasRoomForOtherBlocks = this.getTestRowHasRoomForOtherBlocks(testRow, blocks, blockIndex, startIndex);
                     if(!hasRoomForOtherBlocks)
-                    {
                         break;
-                    }
                 }
 
                 startIndex++;
@@ -317,7 +297,8 @@ export class AppComponent implements OnInit{
             return true;
 
         let continueAtIndex = 0;
-        for(let i = 0; i < blocks.length; i++)
+        //for(let i = 0; i < blocks.length; i++)
+        for(const blockLength of blocks)
         {
             let blockFound = false;
             do{
@@ -326,18 +307,17 @@ export class AppComponent implements OnInit{
 
                 if(testRow[continueAtIndex].status == CellStatus.filled)
                 {
-                    let j = 0;
-                    do{
-                        if(!testRow[continueAtIndex])
+                    //let j = 0;
+                    //do{
+                    for(let j = 0; j < blockLength; j++)
+                    {
+                        if(!testRow[continueAtIndex] ||
+                            testRow[continueAtIndex].status != CellStatus.filled)
                             return false;
 
-                        if(testRow[continueAtIndex].status != CellStatus.filled)
-                        {
-                            return false;
-                        }
                         continueAtIndex++;
-                        j++;
-                    }while(j < blocks[i]);
+                        //j++;
+                    }//while(j < block);
                     blockFound = true;
                 }
                 else
@@ -349,41 +329,39 @@ export class AppComponent implements OnInit{
         return true;
     }
 
-    checkAllBlocksSeperatedByCrosses(result: BlockPlacmentResult, blocks: number[]): boolean
+    allBlocksSeperatedByCrosses(result: BlockPlacmentResult, blocks: number[]): boolean
     {
         const row = result.testRow;
-        let continueAtIndex = 0;
-        // blocks.forEach(block =>
-        // {
-        for(const block of blocks)
+        let indexOfFirstCellOfBlock = 0;
+
+        for(const blockLength of blocks)
         {
             let cellsChecked = 0;
-            for(let i = continueAtIndex; i < row.length; i++)
+            for(let i = indexOfFirstCellOfBlock; i < row.length; i++)
             {
                 if(row[i].status == CellStatus.filled)
                 {
                     cellsChecked++;
-                    //continueAtIndex++;
                 }
                 else
-                    continueAtIndex++;
-                if(cellsChecked == block)
+                    indexOfFirstCellOfBlock++;
+
+                if(cellsChecked == blockLength)
                     break;
             }
 
-            const cellBeforeBlockOK = row[continueAtIndex - 1] == undefined || row[continueAtIndex - 1].status == CellStatus.cross;
-            const cellAfterBlockOK = row[continueAtIndex + block ] == undefined || row[continueAtIndex + block ].status == CellStatus.cross;
+            const cellBeforeBlockOK = row[indexOfFirstCellOfBlock - 1] == undefined || row[indexOfFirstCellOfBlock - 1].status == CellStatus.cross;
+            const cellAfterBlockOK = row[indexOfFirstCellOfBlock + blockLength ] == undefined || row[indexOfFirstCellOfBlock + blockLength ].status == CellStatus.cross;
 
             if(!cellBeforeBlockOK || !cellAfterBlockOK)
                 return false;
 
-            continueAtIndex += block;
-        //});
+            indexOfFirstCellOfBlock += blockLength;
         }
         return true;
     }
 
-    findSimilarities(results: BlockPlacmentResult[]): CellData[]
+    getSimilarities(results: BlockPlacmentResult[]): CellData[]
     {
         const similarities: CellData[] = [];
 
@@ -403,6 +381,13 @@ export class AppComponent implements OnInit{
         }
 
         return similarities;
+    }
+
+    getCellsFilledOrCrossedCount(rowData: RowData[])
+    {
+        let cellsFilledOrCrossed = 0;
+        rowData.forEach(row => cellsFilledOrCrossed += row.getCellsFilledOrCrossedCount());
+        return cellsFilledOrCrossed;
     }
 
     rowDatasToColumnDatas(rowDatas: RowData[]): RowData[]
