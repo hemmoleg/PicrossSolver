@@ -44,6 +44,15 @@ import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.
 
         <button (click)="btnSolveClicked()">CALC</button>
 
+        <cell
+            [cellData]="TESTcellData"
+            [similiar]="false"
+            [isFithColumn]="false"
+            [isSixthColumn]="false"
+            [isFithRow]="false"
+            [isSixthRow]="false">
+        </cell>
+
         <div *ngFor="let resultMatrix of resultMatrices.resultMatrices | slice: 1, let i = index">
             Iteration: {{i+1}}
             <matrix
@@ -63,11 +72,14 @@ export class AppComponent implements OnInit{
 
     resultMatrices: ResultMatrices = new ResultMatrices();
 
+    TESTcellData: CellData = new CellData();
+
     @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
     @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
 
     ngOnInit()
     {
+        this.TESTcellData.status = CellStatus.filled;
     }
 
     btnCreateClicked(dimensions: number[])
@@ -87,11 +99,8 @@ export class AppComponent implements OnInit{
         const rowInputsArray = this.rowInputs.toArray();
         const columnInputsArray = this.columnInputs.toArray();
 
-        const rowNumbers = [];
-        rowInputsArray.forEach(rowInput => rowNumbers.push(rowInput.numbers));
-
-        const columnNumbers = [];
-        columnInputsArray.forEach(columnInput => columnNumbers.push(columnInput.numbers));
+        const rowNumbers = Array.from(rowInputsArray, rowInput => rowInput.numbers);
+        const columnNumbers = Array.from(columnInputsArray, columnInput => columnInput.numbers);
 
         const solver = new Solver();
         this.resultMatrices = solver.solve(rowNumbers, columnNumbers);

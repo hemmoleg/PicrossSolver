@@ -59,6 +59,7 @@ export class Solver{
             }
 
             const cellsFilledOrCrossedCount = this.getCellsFilledOrCrossedCount( resultMatrices.last() );
+            console.log(cellsFilledOrCrossedCount);
             if(cellsFilledOrCrossedCountBefore >= cellsFilledOrCrossedCount)
             {
                 console.error('no new cells were filled in current iterartion. aborting...');
@@ -280,9 +281,10 @@ export class Solver{
 
     getCellsFilledOrCrossedCount(rowData: RowData[])
     {
-        let cellsFilledOrCrossed = 0;
-        rowData.forEach(row => cellsFilledOrCrossed += row.getCellsFilledOrCrossedCount());
-        return cellsFilledOrCrossed;
+        return rowData.reduce((total, row) => {
+            total += row.getCellsFilledOrCrossedCount();
+            return total;
+          }, 0);
     }
 
     rowDatasToColumnDatas(rowDatas: RowData[]): RowData[]

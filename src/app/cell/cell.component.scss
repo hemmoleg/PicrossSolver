@@ -9,8 +9,27 @@
 
     border: 2px solid black;
 
+    &:after{
+        content: "";
+        display: block;
+        color: coral;
+        position: relative;//absolute;
+        z-index: 1;
+        background: coral;
+        transform: scale(2.5);
+        height: 100%;
+        width: 100%;
+        opacity: 0;
+        transition-property: all;
+        transition-duration: 0.3s;
+        transition-timing-function: ease-out;
+    }
+
     &.filled{
-        background-color: styles.$color-button-background;
+        &:after{
+            transform: scale(1);
+            opacity: 1;
+        }
     }
 
     &.isFithColumn{
@@ -35,6 +54,15 @@
 .wc-box{
     position: relative;
     top: 1em;
+    transform: scale(2.5);
+    opacity: 0;
+    animation: anim 0.3s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes anim{
+    0%{transform: scale(2.5); opacity: 0}
+    100%{transform: scale(1); opacity: 1}
 }
 
 .wc-box div:before,
