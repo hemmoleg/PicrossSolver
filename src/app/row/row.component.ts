@@ -1,4 +1,4 @@
-import { Input, Component} from '@angular/core';
+import { Input, Component, Output, EventEmitter} from '@angular/core';
 import { CellData, CellStatus } from '../../cellData';
 import { RowData } from 'src/rowData';
 
@@ -7,15 +7,16 @@ import { RowData } from 'src/rowData';
   styleUrls: ['./row.component.scss'],
   template: `
     <div id="row"> <!--  value={{numbers[i]}} -->
-        <cell *ngFor="let cellData of rowData.cellData; let i = index"
+        <cell *ngFor="let cellData of rowData.cellDatas; let i = index"
             [cellData]="cellData"
             [similiar]="similarities ? similarities.includes(i) : false"
-            [isFithColumn]="(i+1) % 5 == 0 && i < rowData.cellData.length - 1"
+            [isFithColumn]="(i+1) % 5 == 0 && i < rowData.cellDatas.length - 1"
             [isSixthColumn]="(i) % 5 == 0 && i != 0"
             [isFithRow]="isFithRow"
             [isSixthRow]="isSixthRow"
             (click)="onCellClick(i)"
-            (contextmenu)="onCellRightClick(i)">
+            (contextmenu)="onCellRightClick(i)"
+            (AnimationEnd)="onCellAnimationEnd()">
         </cell>
     </div>
   `,
@@ -27,29 +28,35 @@ export class Row{
     @Input() isFithRow: boolean;
     @Input() isSixthRow: boolean;
     @Input() similarities: number[];
+    @Output() CellAnimationEnd = new EventEmitter();
 
     onCellClick(clickedIndex: number)
     {
         if(!this.isEditable) return;
         console.log("onCellClickd", clickedIndex);
-        if(this.rowData.cellData[clickedIndex].status == CellStatus.empty){
-            this.rowData.cellData[clickedIndex].status = CellStatus.filled;
-            this.rowData.cellData[clickedIndex].isHard = true;
+        if(this.rowData.cellDatas[clickedIndex].status == CellStatus.empty){
+            this.rowData.cellDatas[clickedIndex].status = CellStatus.filled;
+            this.rowData.cellDatas[clickedIndex].isHard = true;
         }else{
-            this.rowData.cellData[clickedIndex].status = CellStatus.empty;
-            this.rowData.cellData[clickedIndex].isHard = false;
+            this.rowData.cellDatas[clickedIndex].status = CellStatus.empty;
+            this.rowData.cellDatas[clickedIndex].isHard = false;
         }
+    }
+
+    onCellAnimationEnd()
+    {
+        this.CellAnimationEnd.emit();
     }
 
     onCellRightClick(clickedIndex: number)
     {
         if(!this.isEditable) return;
-        if(this.rowData.cellData[clickedIndex].status == CellStatus.empty){
-            this.rowData.cellData[clickedIndex].status = CellStatus.cross;
-            this.rowData.cellData[clickedIndex].isHard = true;
+        if(this.rowData.cellDatas[clickedIndex].status == CellStatus.empty){
+            this.rowData.cellDatas[clickedIndex].status = CellStatus.cross;
+            this.rowData.cellDatas[clickedIndex].isHard = true;
         }else{
-            this.rowData.cellData[clickedIndex].status = CellStatus.empty;
-            this.rowData.cellData[clickedIndex].isHard = false;
+            this.rowData.cellDatas[clickedIndex].status = CellStatus.empty;
+            this.rowData.cellDatas[clickedIndex].isHard = false;
         }
         return false;
     }

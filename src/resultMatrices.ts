@@ -15,4 +15,8 @@ export class ResultMatrices{
         else
             return this.resultMatrices[this.resultMatrices.length - 1];
     }
+
+    get length(){
+        return this.resultMatrices.length;
+    }
 }

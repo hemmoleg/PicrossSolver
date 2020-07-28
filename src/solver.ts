@@ -35,7 +35,7 @@ export class Solver{
                 //first rows
                 for(let i = 0; i < rowInputsArray.length; i++)
                 {
-                    const similiarities = this.findSimiliarities(rowInputsArray[i], resultMatrices.last()[i].cellData);
+                    const similiarities = this.findSimiliarities(rowInputsArray[i], resultMatrices.last()[i].cellDatas);
                     const rowData = new RowData(similiarities);
                     resultMatrix.push(rowData);
                 }
@@ -49,7 +49,7 @@ export class Solver{
                 const resultColumnDatas: RowData[] = [];
                 for(let i = 0; i < lastResultAsColumns.length; i++)
                 {
-                    const similiarities = this.findSimiliarities(columnInputsArray[i], lastResultAsColumns[i].cellData);
+                    const similiarities = this.findSimiliarities(columnInputsArray[i], lastResultAsColumns[i].cellDatas);
                     resultColumnDatas.push( new RowData(similiarities) );
                 }
                 resultMatrix = this.columnDatasToRowDatas(resultColumnDatas);
@@ -67,7 +67,7 @@ export class Solver{
             }
             cellsFilledOrCrossedCountBefore = cellsFilledOrCrossedCount;
 
-        }while(!resultMatrices.last().every((row, i) => this.allBlocksPresent(row.cellData, rowInputsArray[i])));
+        }while(!resultMatrices.last().every((row, i) => this.allBlocksPresent(row.cellDatas, rowInputsArray[i])));
 
         console.log('Solved after', iterationCounter, 'iterations');
         return resultMatrices;
@@ -279,12 +279,9 @@ export class Solver{
         return similarities;
     }
 
-    getCellsFilledOrCrossedCount(rowData: RowData[])
+    getCellsFilledOrCrossedCount(rowData: RowData[]): number
     {
-        return rowData.reduce((total, row) => {
-            total += row.getCellsFilledOrCrossedCount();
-            return total;
-          }, 0);
+        return rowData.reduce( (total, row) => total + row.getCellsFilledOrCrossedCount(), 0 );
     }
 
     rowDatasToColumnDatas(rowDatas: RowData[]): RowData[]
@@ -295,7 +292,7 @@ export class Solver{
             columns.push(new RowData());
             for(let j = 0; j < this.matrixY; j++)
             {
-                columns[columns.length - 1].cellData[j] = rowDatas[j].cellData[i];
+                columns[columns.length - 1].cellDatas[j] = rowDatas[j].cellDatas[i];
             }
         }
         console.log('resultsToColumns', columns);
@@ -310,7 +307,7 @@ export class Solver{
             rows.push(new RowData());
             for(let j = 0; j < this.matrixY; j++)
             {
-                rows[rows.length - 1].cellData[j] = columnDatas[j].cellData[i];
+                rows[rows.length - 1].cellDatas[j] = columnDatas[j].cellDatas[i];
             }
         }
         console.log('resultsToColumns', rows);

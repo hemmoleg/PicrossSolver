@@ -1,4 +1,4 @@
-import { Input, Component} from '@angular/core';
+import { Input, Component, Output, EventEmitter} from '@angular/core';
 import {CellData, CellStatus} from '../../cellData';
 
 @Component({
@@ -11,7 +11,8 @@ import {CellData, CellStatus} from '../../cellData';
             [class.isSixthColumn]="isSixthColumn"
             [class.isFithRow]="isFithRow"
             [class.isSixthRow]="isSixthRow"
-            [class.similar]="similiar">
+            [class.similar]="similiar"
+            (animationend)="onAnimationEnd()">
             <div *ngIf="cellData.status == cellStatus.cross"
                  class="wc-box">
                 <div class="close"></div>
@@ -21,12 +22,18 @@ import {CellData, CellStatus} from '../../cellData';
 })
 export class Cell{
 
-  @Input() cellData: CellData;
-  @Input() isFithColumn: boolean;
-  @Input() isSixthColumn: boolean;
-  @Input() isFithRow: boolean;
-  @Input() isSixthRow: boolean;
-  @Input() similiar: boolean;
+    @Input() cellData: CellData;
+    @Input() isFithColumn: boolean;
+    @Input() isSixthColumn: boolean;
+    @Input() isFithRow: boolean;
+    @Input() isSixthRow: boolean;
+    @Input() similiar: boolean;
+    @Output() AnimationEnd: EventEmitter<null> = new EventEmitter();
 
-  cellStatus = CellStatus;
+    cellStatus = CellStatus;
+
+    onAnimationEnd()
+    {
+        this.AnimationEnd.emit();
+    }
 }
