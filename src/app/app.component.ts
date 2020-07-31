@@ -15,39 +15,19 @@ import { MatrixComponent } from './matrix/matrix.component';
             (btnCreateClicked)="btnCreateClicked($event)">
         </matrixinput>
 
-        <div style="text-align: center">
-            <div *ngIf="rowDatas.length > 0" id="flex">
-                <div id="topLeftDiv" class="flexChild">
-                </div>
-                <div id="topRightDiv" class="flexChild">
-                    <column-row-input #columnInput
-                        *ngFor="let item of rowDatas[0].cellDatas; let i = index;"
-                        [isColumn]="true"
-                        [index]="i">
-                    </column-row-input>
-                </div>
-                <div id="botLeftDiv" class="flexChild">
-                    <div *ngFor="let item of rowDatas; let i = index;">
-                        <column-row-input #rowInput
-                            [isColumn]="false"
-                            [index]="i">
-                        </column-row-input>
-                    </div>
-                </div>
-                <div class="flexChild">
-                    <matrix
-                        [displayRowDatas]="rowDatas"
-                        [isEditable]="true">
-                    </matrix>
-                </div>
-            </div>
+        <div id="master">
+            <game [rowDatas]="rowDatas" [index]=0 [centerIndex]="centerIndex"></game>
+            <game [rowDatas]="rowDatas" [index]=1 [centerIndex]="centerIndex"></game>
+            <game [rowDatas]="rowDatas" [index]=2 [centerIndex]="centerIndex"></game>
         </div>
+
 
         <cell [cellData]="TESTcellData">
         </cell>
         <button (click)="testCell()" style="margin-top:40px">test</button><br>
 
-        <button (click)="btnSolveClicked()">CALC</button>
+        <button (click)="btnSolveClicked()">CALC</button><br>
+        <button (click)="btnMoveClicked()">move</button>
 
         <matrix #matrixComponent
             [isEditable]="false"
@@ -77,6 +57,8 @@ export class AppComponent implements OnInit{
     resultRowDatas: RowData[] = [];
     currentResultMatrixIndex = 0;
 
+    centerIndex = 1;
+
     @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
     @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
     @ViewChild('matrixComponent') matrixComponent: MatrixComponent;
@@ -87,6 +69,11 @@ export class AppComponent implements OnInit{
             this.TESTcellData.status = CellStatus.cross;
         else
             this.TESTcellData.status = CellStatus.empty;
+    }
+
+    btnMoveClicked()
+    {
+        this.centerIndex = 2;
     }
 
     ngOnInit()

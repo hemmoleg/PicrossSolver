@@ -1,0 +1,68 @@
+@use '../../styles.scss';
+
+.circlePos-2{
+    left: 15%;
+    z-index: -3;
+}
+
+.circlePos-1{
+    left: 33%;
+    z-index: -2;
+}
+
+.circlePos0{
+    left: 50%;
+    z-index: 0;
+}
+
+.circlePos1{
+    left: 66%;
+    z-index: -1;
+}
+
+.scalePos-2{
+    transform: scale(0.15);
+}
+
+.scalePos-1{
+    transform: scale(0.3);
+}
+
+.scalePos0{
+    transform: scale(1);
+}
+
+.scalePos1{
+    transform: scale(0.3);
+}
+
+.pp{
+    width: fit-content;
+    position: absolute;
+
+    transition: all 3s ease-in-out;
+}
+
+.parent {
+    font-family: styles.$font-title;
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    margin-left: -50%;
+
+    transition: all 3s ease-in-out;
+}
+.child {
+    background:blue;
+}
+
+#topLeftDiv{
+    background-color:green;
+}
+#topRightDiv{
+    //text-align: left
+    display: flex;
+    align-items: flex-end;
+}
+#botLeftDiv{
+    text-align: right;
+}

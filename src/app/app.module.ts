@@ -8,6 +8,7 @@ import { Row } from './row/row.component';
 import { MatrixInputComponent } from './matrix-input/matrix-input.component';
 import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 import { MatrixComponent } from './matrix/matrix.component';
+import { GameComponent } from './game/game.component';
 
 @NgModule({
    declarations: [
@@ -17,6 +18,7 @@ import { MatrixComponent } from './matrix/matrix.component';
       MatrixInputComponent,
       CollumnRowInputComponent,
       MatrixComponent,
+      GameComponent,
    ],
    imports: [
       BrowserModule,
