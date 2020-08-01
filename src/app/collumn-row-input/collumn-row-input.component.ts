@@ -17,33 +17,32 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CollumnRowInputComponent implements OnInit{
 
-    numbers: number[] = [1, 2];
+    @Input() numbers: number[] = [1, 2];
     @Input() isColumn: boolean;
-    @Input() index: number;
 
     constructor() { }
     ngOnInit(): void {
         //solved
-        if(this.isColumn)
-        {
-            switch (this.index){
-                case 0: this.numbers = [2]; break;
-                case 1: this.numbers = [2,1]; break;
-                case 2: this.numbers = [1,2]; break;
-                case 3: this.numbers = [1,2]; break;
-                case 4: this.numbers = [3]; break;
-            }
-        }
-        else
-        {
-            switch (this.index){
-                case 0: this.numbers = [5]; break;
-                case 1: this.numbers = [2,1]; break;
-                case 2: this.numbers = [2]; break;
-                case 3: this.numbers = [2]; break;
-                case 4: this.numbers = [2]; break;
-            }
-        }
+        // if(this.isColumn)
+        // {
+        //     switch (this.index){
+        //         case 0: this.numbers = [2]; break;
+        //         case 1: this.numbers = [2,1]; break;
+        //         case 2: this.numbers = [1,2]; break;
+        //         case 3: this.numbers = [1,2]; break;
+        //         case 4: this.numbers = [3]; break;
+        //     }
+        // }
+        // else
+        // {
+        //     switch (this.index){
+        //         case 0: this.numbers = [5]; break;
+        //         case 1: this.numbers = [2,1]; break;
+        //         case 2: this.numbers = [2]; break;
+        //         case 3: this.numbers = [2]; break;
+        //         case 4: this.numbers = [2]; break;
+        //     }
+        // }
 
         //solved
         // if(this.isColumn)

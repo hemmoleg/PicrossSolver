@@ -7,6 +7,8 @@ import { ResultMatrices } from '../resultMatrices';
 import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 import { MatrixComponent } from './matrix/matrix.component';
 
+import sampleJSON from '../assets/sampleJSON.json';
+
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.scss', './cell/cell.component.scss'],
@@ -16,9 +18,11 @@ import { MatrixComponent } from './matrix/matrix.component';
         </matrixinput>
 
         <div id="master">
-            <game [rowDatas]="rowDatas" [index]=0 [centerIndex]="centerIndex"></game>
-            <game [rowDatas]="rowDatas" [index]=1 [centerIndex]="centerIndex"></game>
-            <game [rowDatas]="rowDatas" [index]=2 [centerIndex]="centerIndex"></game>
+            <game *ngFor="let riddle of sampleJSON.riddles, let i = index"
+                [rowInputs]="riddle.rowInputs"
+                [columnInputs]="riddle.columnInputs"
+                [index]="i"
+                [centerIndex]="centerIndex"></game>
         </div>
 
 
@@ -29,12 +33,14 @@ import { MatrixComponent } from './matrix/matrix.component';
         <button (click)="btnSolveClicked()">CALC</button><br>
         <button (click)="btnMoveClicked()">move</button>
 
+        <!-- 'result animation' is played in this matrix -->
         <matrix #matrixComponent
             [isEditable]="false"
             [isResult]="true"
             (matrixSet)="onMatrixSet()">
         </matrix>
 
+        <!-- would show each resultMatrix -> each step of the solution -->
         <!-- <div *ngFor="let resultMatrix of resultMatrices.resultMatrices | slice: 1, let i = index">
             Iteration: {{i+1}}
             <matrix
@@ -59,8 +65,10 @@ export class AppComponent implements OnInit{
 
     centerIndex = 1;
 
-    @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
-    @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
+    sampleJSON;
+
+    // @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
+    // @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
     @ViewChild('matrixComponent') matrixComponent: MatrixComponent;
 
     testCell()
@@ -79,9 +87,10 @@ export class AppComponent implements OnInit{
     ngOnInit()
     {
         this.TESTcellData.status = CellStatus.empty;
-        this.resultRowDatas = Array.apply(null, Array(5)).map(
-            (value, i1) => Array[i1] = new RowData(Array.apply(null, Array(5)).map((value, i2) => Array[i2] = new CellData()))
-        );
+
+        console.log(sampleJSON);
+
+        this.sampleJSON = sampleJSON;
     }
 
     btnCreateClicked(dimensions: number[])
@@ -98,17 +107,17 @@ export class AppComponent implements OnInit{
 
     async btnSolveClicked()
     {
-        const rowInputsArray = this.rowInputs.toArray();
-        const columnInputsArray = this.columnInputs.toArray();
+        // const rowInputsArray = this.rowInputs.toArray();
+        // const columnInputsArray = this.columnInputs.toArray();
 
-        const rowNumbers = Array.from(rowInputsArray, rowInput => rowInput.numbers);
-        const columnNumbers = Array.from(columnInputsArray, columnInput => columnInput.numbers);
+        // const rowNumbers = Array.from(rowInputsArray, rowInput => rowInput.numbers);
+        // const columnNumbers = Array.from(columnInputsArray, columnInput => columnInput.numbers);
 
-        const solver = new Solver();
-        this.resultMatrices = solver.solve(rowNumbers, columnNumbers);
+        // const solver = new Solver();
+        // this.resultMatrices = solver.solve(rowNumbers, columnNumbers);
 
-        this.currentResultMatrixIndex = 0;
-        this.setNextResultMatrix();
+        // this.currentResultMatrixIndex = 0;
+        // this.setNextResultMatrix();
     }
 
     async setNextResultMatrix(withDelay: boolean = false)
