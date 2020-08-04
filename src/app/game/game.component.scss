@@ -1,12 +1,22 @@
 @use '../../styles.scss';
 
+$scale2: 0.2;
+$scale1: 0.6;
+$time: 1s;
+
+.circlePosHiddenLeft{
+    left: 10%;
+    opacity: 0;
+    z-index: -4;
+}
+
 .circlePos-2{
     left: 15%;
     z-index: -3;
 }
 
 .circlePos-1{
-    left: 33%;
+    left: 24%;
     z-index: -2;
 }
 
@@ -16,16 +26,31 @@
 }
 
 .circlePos1{
-    left: 66%;
+    left: 76%;
     z-index: -1;
 }
 
+.circlePos2{
+    left: 85%;
+    z-index: -4;
+}
+
+.circlePosHiddenRight{
+    left: 85%;
+    opacity: 0;
+    z-index: -4;
+}
+
+.scalePosHiddenLeft{
+    transform: scale($scale2);
+}
+
 .scalePos-2{
-    transform: scale(0.15);
+    transform: scale($scale2);
 }
 
 .scalePos-1{
-    transform: scale(0.3);
+    transform: scale($scale1);
 }
 
 .scalePos0{
@@ -33,23 +58,32 @@
 }
 
 .scalePos1{
-    transform: scale(0.3);
+    transform: scale($scale1);
 }
 
-.pp{
-    width: fit-content;
+.scalePos2{
+    transform: scale($scale2);
+}
+
+.scalePosHiddenRight{
+    transform: scale($scale2); 
+}
+
+.mainDiv{
     position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
 
-    transition: all 3s ease-in-out;
+    transition: all $time ease-in-out;
 }
 
-.parent {
+.subDiv2 {
     font-family: styles.$font-title;
     display: inline-grid;
     grid-template-columns: auto auto;
-    margin-left: -50%;
+    
 
-    transition: all 3s ease-in-out;
+    transition: all $time ease-in-out;
 }
 .child {
     background:blue;
@@ -59,7 +93,6 @@
     background-color:green;
 }
 #topRightDiv{
-    //text-align: left
     display: flex;
     align-items: flex-end;
 }

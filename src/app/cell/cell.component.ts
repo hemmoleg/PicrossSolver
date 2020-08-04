@@ -5,19 +5,29 @@ import {CellData, CellStatus} from '../../cellData';
   selector: 'cell',
   styleUrls: ['./cell.component.scss'],
   template: `
-    <div id="cell"
-            [class.filled]="cellData.status == cellStatus.filled"
+    <div id="cellContainer">
+        <div id="cell"
             [class.isFithColumn]="isFithColumn"
             [class.isSixthColumn]="isSixthColumn"
             [class.isFithRow]="isFithRow"
             [class.isSixthRow]="isSixthRow"
             [class.similar]="similiar"
+            [class.rowFirst]="rowFirstGlow"
+            [class.row]="rowGlow"
+            [class.rowLast]="rowLastGlow"
             (animationend)="onAnimationEnd()">
-            <div *ngIf="cellData.status == cellStatus.cross"
-                 class="wc-box">
-                <div class="close"></div>
-            </div>
         </div>
+        <div id="fill" *ngIf="cellData.status == cellStatus.filled"
+            [class.filled]="cellData.status == cellStatus.filled"
+            (animationend)="onAnimationEnd()">
+        </div>
+        <div *ngIf="cellData.status == cellStatus.cross"
+            class="crossContainer"
+            (animationend)="onAnimationEnd()">
+            <div class="close"></div>
+        </div>
+    </div>
+    
   `,
 })
 export class Cell{
@@ -28,6 +38,11 @@ export class Cell{
     @Input() isFithRow: boolean;
     @Input() isSixthRow: boolean;
     @Input() similiar: boolean;
+
+    @Input() rowFirstGlow: boolean;
+    @Input() rowGlow: boolean;
+    @Input() rowLastGlow: boolean;
+
     @Output() AnimationEnd: EventEmitter<null> = new EventEmitter();
 
     cellStatus = CellStatus;

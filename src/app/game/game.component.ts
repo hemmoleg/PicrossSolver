@@ -1,48 +1,37 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { RowData } from 'src/rowData';
 import { CellData } from 'src/cellData';
+import { MatrixComponent } from '../matrix/matrix.component';
 
 @Component({
   selector: 'game',
   styleUrls: ['./game.component.scss'],
   template: `
-    <div class="pp"  [class]="ppClass">
-        <div class="parent" *ngIf="rowDatas.length > 0"
-            [class]="parentClass">
+    <div class="mainDiv"  [class]="mainDivClass">
+        <div class="subDiv2" *ngIf="rowDatas.length > 0"
+            [class]="subDivClass">
             <div id="topLeftDiv" class="child">
             </div>
             <div id="topRightDiv" class="child">
-                <!-- <column-row-input #columnInput
-                    *ngFor="let item of rowDatas[0].cellDatas; let i = index;"
-                    [isColumn]="true"
-                    [index]="i">
-                </column-row-input> -->
                 <column-row-input #columnInput
                     *ngFor="let numbers of columnInputs; let i = index;"
                     [numbers]="numbers"
-                    [isColumn]="true"
-                    [index]="i">
+                    [isColumn]="true">
                 </column-row-input>
             </div>
             <div id="botLeftDiv" class="child">
-                <!-- <div *ngFor="let item of rowDatas; let i = index;">
-                    <column-row-input #rowInput
-                        [isColumn]="false"
-                        [index]="i">
-                    </column-row-input>
-                </div> -->
                 <div *ngFor="let numbers of rowInputs; let i = index;">
                     <column-row-input #rowInput
                         [numbers]="numbers"
-                        [isColumn]="false"
-                        [index]="i">
+                        [isColumn]="false">
                     </column-row-input>
                 </div>
             </div>
             <div class="child">
                 <matrix
                     [displayRowDatas]="rowDatas"
-                    [isEditable]="true">
+                    [isEditable]="true"
+                    (matrixSet)="onMatrixSet()">
                 </matrix>
             </div>
         </div>
@@ -52,9 +41,10 @@ import { CellData } from 'src/cellData';
 })
 export class GameComponent implements OnInit{
 
-    ppClass: string;
-    parentClass: string;
+    mainDivClass: string;
+    subDivClass: string;
 
+    @ViewChild(MatrixComponent) matrixComponent: MatrixComponent;
     @Input() rowDatas: RowData[] = [];
 
     @Input() rowInputs: Array<Array<number>>;
@@ -71,24 +61,49 @@ export class GameComponent implements OnInit{
     {
         const offset = this.index - centerIndex;
 
+        if(offset < -2)
+        {
+            this.mainDivClass = 'circlePosHiddenLeft';
+            this.subDivClass = 'scalePosHiddenLeft';
+            return;
+        }
+
+        if(offset > 2)
+        {
+            this.mainDivClass = 'circlePosHiddenRight';
+            this.subDivClass = 'scalePosHiddenRight';
+            return;
+        }
+
         switch(offset){
-            case -2: this.ppClass = 'circlePos-2'; this.parentClass = 'scalePos-2'; break;
-            case -1: this.ppClass = 'circlePos-1'; this.parentClass = 'scalePos-1'; break;
-            case 0: this.ppClass = 'circlePos0'; this.parentClass = 'scalePos0'; break;
-            case 1: this.ppClass = 'circlePos1'; this.parentClass = 'scalePos1'; break;
+            case -2: this.mainDivClass = 'circlePos-2'; this.subDivClass = 'scalePos-2'; break;
+            case -1: this.mainDivClass = 'circlePos-1'; this.subDivClass = 'scalePos-1'; break;
+            case 0: this.mainDivClass = 'circlePos0'; this.subDivClass = 'scalePos0'; break;
+            case 1: this.mainDivClass = 'circlePos1'; this.subDivClass = 'scalePos1'; break;
+            case 2: this.mainDivClass = 'circlePos2'; this.subDivClass = 'scalePos2'; break;
         }
     }
+
+    @Output() matrixSet = new EventEmitter();
 
     ngOnInit()
     {
         if(!this.rowInputs)
             return;
 
-        console.log("rowInputs", this.rowInputs);
-
         this.rowDatas = Array.apply(null, Array(this.rowInputs.length)).map(
             (value, i1) => Array[i1] = new RowData(Array.apply(null, Array(this.columnInputs.length)).map((value, i2) => Array[i2] = new CellData()))
         );
+    }
+
+    setRowDatasAnimted(resultRowDatas: RowData[], setByColumn: boolean)
+    {
+        this.matrixComponent.setRowDatasAnimted(resultRowDatas, setByColumn);
+    }
+
+    onMatrixSet()
+    {
+        this.matrixSet.emit();
     }
 
 }

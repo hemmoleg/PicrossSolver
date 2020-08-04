@@ -6,8 +6,11 @@ import { RowData } from 'src/rowData';
   selector: 'row',
   styleUrls: ['./row.component.scss'],
   template: `
-    <div id="row"> <!--  value={{numbers[i]}} -->
+    <div id="row" [class.rowIsBeingSolved]="rowIsBeingSolved"> 
         <cell *ngFor="let cellData of rowData.cellDatas; let i = index"
+            [rowFirstGlow]="rowIsBeingSolved && i == 0"
+            [rowGlow]="rowIsBeingSolved && i > 0 && i < rowData.cellDatas.length - 1"
+            [rowLastGlow]="rowIsBeingSolved && i == rowData.cellDatas.length - 1"
             [cellData]="cellData"
             [similiar]="similarities ? similarities.includes(i) : false"
             [isFithColumn]="(i+1) % 5 == 0 && i < rowData.cellDatas.length - 1"
@@ -28,6 +31,11 @@ export class Row{
     @Input() isFithRow: boolean;
     @Input() isSixthRow: boolean;
     @Input() similarities: number[];
+
+    @Input() rowIsBeingSolved: boolean;
+    @Input() rowIndex: number;
+    @Input() columnIsBeingSolved: boolean;
+    @Input() columnIndex: number;
     @Output() CellAnimationEnd = new EventEmitter();
 
     onCellClick(clickedIndex: number)

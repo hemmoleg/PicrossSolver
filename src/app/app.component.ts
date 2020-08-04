@@ -7,31 +7,30 @@ import { ResultMatrices } from '../resultMatrices';
 import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 import { MatrixComponent } from './matrix/matrix.component';
 
-import sampleJSON from '../assets/sampleJSON.json';
+import riddlesJSON from '../assets/riddles.json';
+import { GameComponent } from './game/game.component';
 
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.scss', './cell/cell.component.scss'],
   template: `
-        <matrixinput
-            (btnCreateClicked)="btnCreateClicked($event)">
-        </matrixinput>
-
         <div id="master">
-            <game *ngFor="let riddle of sampleJSON.riddles, let i = index"
+            <game *ngFor="let riddle of riddlesJSON.riddles, let i = index"
                 [rowInputs]="riddle.rowInputs"
                 [columnInputs]="riddle.columnInputs"
                 [index]="i"
-                [centerIndex]="centerIndex"></game>
+                [centerIndex]="centerRiddleIndex"
+                (matrixSet)="onMatrixSet()"
+                ></game>
         </div>
 
-
-        <cell [cellData]="TESTcellData">
+        <cell id="testPos" [cellData]="TESTcellData">
         </cell>
         <button (click)="testCell()" style="margin-top:40px">test</button><br>
 
         <button (click)="btnSolveClicked()">CALC</button><br>
-        <button (click)="btnMoveClicked()">move</button>
+        <button (click)="btnMovePlusClicked()">move+</button><br>
+        <button (click)="btnMoveMinusClicked()">move-</button>
 
         <!-- 'result animation' is played in this matrix -->
         <matrix #matrixComponent
@@ -60,64 +59,54 @@ export class AppComponent implements OnInit{
 
     TESTcellData: CellData = new CellData();
     resultMatrices: ResultMatrices;
-    resultRowDatas: RowData[] = [];
     currentResultMatrixIndex = 0;
 
-    centerIndex = 1;
+    centerRiddleIndex = 3;
+    solvedGameComponent: GameComponent;
 
-    sampleJSON;
+    riddlesJSON;
 
-    // @ViewChildren('columnInput') columnInputs: QueryList<CollumnRowInputComponent>;
-    // @ViewChildren('rowInput') rowInputs: QueryList<CollumnRowInputComponent>;
     @ViewChild('matrixComponent') matrixComponent: MatrixComponent;
+    @ViewChildren(GameComponent) gameComponents: QueryList<GameComponent>;
 
-    testCell()
+    btnMovePlusClicked()
     {
-        if(this.TESTcellData.status == CellStatus.empty)
-            this.TESTcellData.status = CellStatus.cross;
-        else
-            this.TESTcellData.status = CellStatus.empty;
+        this.centerRiddleIndex++;
+        if(this.centerRiddleIndex > (this.riddlesJSON.riddles.length - 1))
+            this.centerRiddleIndex = this.riddlesJSON.riddles.length - 1;
     }
 
-    btnMoveClicked()
+    btnMoveMinusClicked()
     {
-        this.centerIndex = 2;
+        console.log(this.gameComponents);
+        this.centerRiddleIndex--;
+        if(this.centerRiddleIndex < 0) this.centerRiddleIndex = 0;
     }
 
     ngOnInit()
     {
         this.TESTcellData.status = CellStatus.empty;
 
-        console.log(sampleJSON);
+        console.log(riddlesJSON);
 
-        this.sampleJSON = sampleJSON;
+        this.riddlesJSON = riddlesJSON;
+        console.log(this.riddlesJSON);
     }
-
-    btnCreateClicked(dimensions: number[])
-    {
-        this.matrixX = dimensions[0];
-        this.matrixY = dimensions[1];
-        this.rowDatas = Array.apply(null, Array(dimensions[0])).map(
-            (value, i1) => Array[i1] = new RowData(Array.apply(null, Array(dimensions[1])).map((value, i2) => Array[i2] = new CellData()))
-        );
-
-        console.log(this.rowDatas);
-    }
-
 
     async btnSolveClicked()
     {
-        // const rowInputsArray = this.rowInputs.toArray();
-        // const columnInputsArray = this.columnInputs.toArray();
+        const rowNumbers = this.riddlesJSON.riddles[this.centerRiddleIndex].rowInputs;
+        const columnNumbers = this.riddlesJSON.riddles[this.centerRiddleIndex].columnInputs;
 
-        // const rowNumbers = Array.from(rowInputsArray, rowInput => rowInput.numbers);
-        // const columnNumbers = Array.from(columnInputsArray, columnInput => columnInput.numbers);
+        console.log(rowNumbers, columnNumbers);
 
-        // const solver = new Solver();
-        // this.resultMatrices = solver.solve(rowNumbers, columnNumbers);
+        this.solvedGameComponent = this.gameComponents.toArray()[this.centerRiddleIndex];
 
-        // this.currentResultMatrixIndex = 0;
-        // this.setNextResultMatrix();
+        const solver = new Solver();
+        this.resultMatrices = solver.solve(rowNumbers, columnNumbers);
+
+        this.currentResultMatrixIndex = 0;
+        this.setNextResultMatrix();
     }
 
     async setNextResultMatrix(withDelay: boolean = false)
@@ -132,8 +121,8 @@ export class AppComponent implements OnInit{
         }
 
         console.log('setting matrix', this.currentResultMatrixIndex);
-        this.resultRowDatas = this.resultMatrices.resultMatrices[this.currentResultMatrixIndex];
-        this.matrixComponent.setRowDatasAnimted(this.resultRowDatas, this.currentResultMatrixIndex % 2 == 0);
+        const resultRowDatas = this.resultMatrices.resultMatrices[this.currentResultMatrixIndex];
+        this.solvedGameComponent.setRowDatasAnimted(resultRowDatas, this.currentResultMatrixIndex % 2 == 0);
         this.currentResultMatrixIndex++;
     }
 
@@ -141,6 +130,26 @@ export class AppComponent implements OnInit{
     {
         this.setNextResultMatrix(true);
     }
+
+    testCell()
+    {
+        if(this.TESTcellData.status == CellStatus.empty)
+            this.TESTcellData.status = CellStatus.cross;
+        else
+            this.TESTcellData.status = CellStatus.empty;
+    }
+
+    btnCreateClicked(dimensions: number[])
+    {
+        this.matrixX = dimensions[0];
+        this.matrixY = dimensions[1];
+        this.rowDatas = Array.apply(null, Array(dimensions[0])).map(
+            (value, i1) => Array[i1] = new RowData(Array.apply(null, Array(dimensions[1])).map((value, i2) => Array[i2] = new CellData()))
+        );
+
+        console.log(this.rowDatas);
+    }
+
 
     async delay(ms: number)
     {

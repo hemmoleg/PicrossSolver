@@ -14,6 +14,10 @@ import { ClassField } from '@angular/compiler';
                 [isEditable]="isEditable"
                 [isFithRow]="(i+1) % 5 == 0 && i < displayRowDatas.length-1"
                 [isSixthRow]="(i) % 5 == 0 && i != 0"
+                [rowIsBeingSolved]="!setByColumn && i == rowIndexToSet"
+                [rowIndex]="rowIndexToSet"
+                [columnIsBeingSolved]="setByColumn"
+                [columnIndex]="columnIndexToSet"
                 (CellAnimationEnd)="onCellAnimationEnd()">
             </row>
         </div>
@@ -24,8 +28,8 @@ export class MatrixComponent{
     @Input() displayRowDatas: RowData[] = [];
     rowDatasToSet: RowData[] = [];
     setByColumn: boolean;
-    rowIndexToSet = 0;
-    columnIndexToSet = 0;
+    rowIndexToSet;
+    columnIndexToSet;
 
     @Input() isEditable: boolean;
     @Input() isResult: true;
@@ -35,7 +39,7 @@ export class MatrixComponent{
     setRowDatasAnimted(inputRowDatas: RowData[], setByColumn: boolean)
     {
         if(inputRowDatas.length == 0) return;
-        //this.setRowDatas(inputRowDatas);
+
         this.rowDatasToSet = inputRowDatas;
         this.setByColumn = setByColumn;
 

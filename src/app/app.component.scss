@@ -1,1 +1,13 @@
 @use '../styles.scss';
+
+#master{
+    // display: flex;
+    // align-items: center;
+    overflow: hidden;
+}
+
+#testPos{
+    position: absolute;
+    top: 100px;
+    left: 200px;
+}

@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Cell } from './cell/cell.component';
 import { Row } from './row/row.component';
-import { MatrixInputComponent } from './matrix-input/matrix-input.component';
 import { CollumnRowInputComponent } from './collumn-row-input/collumn-row-input.component';
 import { MatrixComponent } from './matrix/matrix.component';
 import { GameComponent } from './game/game.component';
@@ -15,7 +14,6 @@ import { GameComponent } from './game/game.component';
       AppComponent,
       Cell,
       Row,
-      MatrixInputComponent,
       CollumnRowInputComponent,
       MatrixComponent,
       GameComponent,

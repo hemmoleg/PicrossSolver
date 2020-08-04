@@ -1,63 +1,84 @@
 //$import "colors.less";
 @use '../../styles.scss';
+$width: 2em;
+$height: 2em;
+$borderWidth: 2px;
 $time: 1s;
 
+#cellContainer{
+    position: relative;
+}
+
+#fill{
+    display: block;
+    position: absolute;
+    top:$borderWidth;
+    left:$borderWidth;
+    width: $width;
+    height: $height;
+    background: coral;
+    transform: scale(2.5);
+    opacity: 0;
+    z-index: 1;
+
+    &.filled{
+        animation: anim $time ease-in-out;
+        animation-fill-mode: forwards;
+    }
+}
 
 #cell{
-    width: 2em;
-    height: 2em;
+    width: $width;
+    height: $height;
 
     background-color: styles.$colorCellBackground;
 
-    border: 2px solid black;
+    border: $borderWidth solid black;
 
-    &:after{
-        content: "";
-        display: block;
-        color: coral;
-        position: relative;//absolute;
-        z-index: 1;
-        background: coral;
-        transform: scale(2.5);
-        height: 100%;
-        width: 100%;
-        opacity: 0;
-        // transition-property: all;
-        // transition-duration: $time;
-        // transition-timing-function: ease-out;
+    &.columnFirst{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-40px -40px 0px -40px);
     }
 
-    &.filled{
-        &:after{
-            // transform: scale(1);
-            // opacity: 1;
-            animation: anim $time ease-in-out;
-            animation-fill-mode: forwards;
-        }
+    &.rowFirst{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-40px 0px -40px -40px);
+    }
+
+    &.row{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-40px 0px -40px 0px);
+    }
+
+    &.rowLast{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-40px -40px -40px 0px);
     }
 
     &.isFithColumn{
-        border-right: 2px solid red;
+        border-right: $borderWidth solid red;
     }
     &.isSixthColumn{
-        border-left: 2px solid red;
+        border-left: $borderWidth solid red;
     }
     &.isFithRow{
-        border-bottom: 2px solid red;
+        border-bottom: $borderWidth solid red;
     }
     &.isSixthRow{
-        border-top: 2px solid red;
+        border-top: $borderWidth solid red;
     }
-    
 }
 
 .similar{
-    border: 2px solid purple !important;
+    border: $borderWidth solid purple !important;
 }
 
-.wc-box{
-    position: relative;
-    top: 1em;
+.crossContainer{
+    position: absolute;
+    top:$borderWidth;
+    left:$borderWidth;
+    width: $width;
+    height: $height;
     //transform: scale(2.5);
     opacity: 0;
     animation: anim $time ease-in-out;
@@ -69,8 +90,8 @@ $time: 1s;
     100%{transform: scale(0.999); opacity: 1}
 }
 
-.wc-box div:before,
-.wc-box div:after {
+.crossContainer div:before,
+.crossContainer div:after {
     content: " ";
     position: absolute;
     border-color: #de5985;
@@ -78,17 +99,17 @@ $time: 1s;
     border-width: 0 0 5px 0;
 }
 
-.wc-box .close:before,
-.wc-box .close:after {
+.crossContainer .close:before,
+.crossContainer .close:after {
     right: 0%;
     left: 0%;
     top:calc(50% - 2.5px);
 }
 
-.wc-box .close:before {
+.crossContainer .close:before {
     transform: rotate(45deg);
 }
 
-.wc-box .close:after {
+.crossContainer .close:after {
     transform: rotate(-45deg);
 }
