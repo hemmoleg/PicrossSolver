@@ -9,18 +9,19 @@ import { ClassField } from '@angular/compiler';
     template: `
         <div id="matrixContainer"
             [class.isResult]="isResult">
-            <row #row *ngFor="let rowData of displayRowDatas, let i = index"
+            <row #row *ngFor="let rowData of displayRowDatas, let i = index; let last = last"
                 [rowData]="rowData"
                 [isEditable]="isEditable"
                 [isFithRow]="(i+1) % 5 == 0 && i < displayRowDatas.length-1"
                 [isSixthRow]="(i) % 5 == 0 && i != 0"
-                [rowIsBeingSolved]="!setByColumn && i == rowIndexToSet"
-                [rowIndex]="rowIndexToSet"
+                [thisRowIsBeingSolved]="!setByColumn && i == rowIndexToSet"
                 [columnIsBeingSolved]="setByColumn"
-                [columnIndex]="columnIndexToSet"
+                [columnIndexToSet]="columnIndexToSet"
+                [rowIndex]="i"
+                [isLast]="last"
                 (CellAnimationEnd)="onCellAnimationEnd()">
             </row>
-        </div>
+        </div><!-- [rowIndex]="rowIndexToSet" -->
     `
 })
 export class MatrixComponent{
@@ -42,15 +43,6 @@ export class MatrixComponent{
 
         this.rowDatasToSet = inputRowDatas;
         this.setByColumn = setByColumn;
-
-        for(let i = 0; i < inputRowDatas.length; i++)
-        {
-            if(!this.displayRowDatas[i])
-            {
-                this.displayRowDatas[i] = inputRowDatas[i];
-                continue;
-            }
-        }
 
         if(setByColumn){
             this.rowIndexToSet = -1;

@@ -40,6 +40,16 @@ $time: 1s;
         clip-path: inset(-40px -40px 0px -40px);
     }
 
+    &.column{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-0px -40px 0px -40px);
+    }
+
+    &.columnLast{
+        box-shadow: 0px 0 15px 10px #f00;
+        clip-path: inset(-0px -40px -40px -40px);
+    }
+
     &.rowFirst{
         box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-40px 0px -40px -40px);

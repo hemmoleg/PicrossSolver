@@ -128,6 +128,7 @@ export class AppComponent implements OnInit{
 
     onMatrixSet()
     {
+        //return;
         this.setNextResultMatrix(true);
     }
 

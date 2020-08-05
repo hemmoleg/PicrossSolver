@@ -15,6 +15,9 @@ import {CellData, CellStatus} from '../../cellData';
             [class.rowFirst]="rowFirstGlow"
             [class.row]="rowGlow"
             [class.rowLast]="rowLastGlow"
+            [class.columnFirst]="columnFirstGlow"
+            [class.column]="columnGlow"
+            [class.columnLast]="columnLastGlow"
             (animationend)="onAnimationEnd()">
         </div>
         <div id="fill" *ngIf="cellData.status == cellStatus.filled"
@@ -27,7 +30,6 @@ import {CellData, CellStatus} from '../../cellData';
             <div class="close"></div>
         </div>
     </div>
-    
   `,
 })
 export class Cell{
@@ -42,6 +44,10 @@ export class Cell{
     @Input() rowFirstGlow: boolean;
     @Input() rowGlow: boolean;
     @Input() rowLastGlow: boolean;
+
+    @Input() columnFirstGlow: boolean;
+    @Input() columnGlow: boolean;
+    @Input() columnLastGlow: boolean;
 
     @Output() AnimationEnd: EventEmitter<null> = new EventEmitter();
 
