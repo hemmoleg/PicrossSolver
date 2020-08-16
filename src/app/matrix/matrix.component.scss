@@ -1,4 +1,6 @@
 #matrixContainer{
+    display: flex;
+    flex-wrap: wrap;
     &.isResult{
         margin-bottom: 2em;
     }

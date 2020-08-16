@@ -8,7 +8,7 @@ import { MatrixComponent } from '../matrix/matrix.component';
   styleUrls: ['./game.component.scss'],
   template: `
     <div class="mainDiv"  [class]="mainDivClass">
-        <div class="subDiv2" *ngIf="rowDatas.length > 0"
+        <div class="subDiv" *ngIf="rowDatas.length > 0"
             [class]="subDivClass">
             <div id="topLeftDiv" class="child">
             </div>
@@ -96,9 +96,9 @@ export class GameComponent implements OnInit{
         );
     }
 
-    setRowDatasAnimted(resultRowDatas: RowData[], setByColumn: boolean)
+    setRowDatasAnimated(resultRowDatas: RowData[], setByColumn: boolean)
     {
-        this.matrixComponent.setRowDatasAnimted(resultRowDatas, setByColumn);
+        this.matrixComponent.setRowDatasAnimated(resultRowDatas, setByColumn);
     }
 
     onMatrixSet()

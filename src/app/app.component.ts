@@ -28,6 +28,12 @@ import { GameComponent } from './game/game.component';
         </cell>
         <button (click)="testCell()" style="margin-top:40px">test</button><br>
 
+        <!-- <div stlye="display:flex; flex-wrap: wrap">
+            <cell *ngFor="let cd of TESTCellDataArray"
+                [cellData]="cd">
+            </cell>
+        </div> -->
+
         <button (click)="btnSolveClicked()">CALC</button><br>
         <button (click)="btnMovePlusClicked()">move+</button><br>
         <button (click)="btnMoveMinusClicked()">move-</button>
@@ -58,6 +64,7 @@ export class AppComponent implements OnInit{
     displayRows: RowData[] = [];
 
     TESTcellData: CellData = new CellData();
+    TESTCellDataArray: Array<CellData> = [];
     resultMatrices: ResultMatrices;
     currentResultMatrixIndex = 0;
 
@@ -91,6 +98,9 @@ export class AppComponent implements OnInit{
 
         this.riddlesJSON = riddlesJSON;
         console.log(this.riddlesJSON);
+
+        for(let i = 0; i < 9; i++)
+            this.TESTCellDataArray.push(new CellData());
     }
 
     async btnSolveClicked()
@@ -117,18 +127,17 @@ export class AppComponent implements OnInit{
         if(withDelay)
         {
             console.log('delay...');
-            await this.delay(2000);
+            //await this.delay(500);
         }
 
         console.log('setting matrix', this.currentResultMatrixIndex);
         const resultRowDatas = this.resultMatrices.resultMatrices[this.currentResultMatrixIndex];
-        this.solvedGameComponent.setRowDatasAnimted(resultRowDatas, this.currentResultMatrixIndex % 2 == 0);
+        this.solvedGameComponent.setRowDatasAnimated(resultRowDatas, this.currentResultMatrixIndex % 2 == 1);
         this.currentResultMatrixIndex++;
     }
 
     onMatrixSet()
     {
-        //return;
         this.setNextResultMatrix(true);
     }
 

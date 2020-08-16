@@ -70,6 +70,7 @@ export class Solver{
         }while(!resultMatrices.last().every((row, i) => this.allBlocksPresent(row.cellDatas, rowInputsArray[i])));
 
         console.log('Solved after', iterationCounter, 'iterations');
+        resultMatrices.resultMatrices.shift();
         return resultMatrices;
     }
 

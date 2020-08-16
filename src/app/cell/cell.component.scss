@@ -3,10 +3,14 @@
 $width: 2em;
 $height: 2em;
 $borderWidth: 2px;
-$time: 1s;
+$time: 0.2s;
 
 #cellContainer{
     position: relative;
+
+    &.zIndex2{
+        z-index: 2;
+    }
 }
 
 #fill{
@@ -22,7 +26,7 @@ $time: 1s;
     z-index: 1;
 
     &.filled{
-        animation: anim $time ease-in-out;
+        animation: animCellContent $time ease-in-out;
         animation-fill-mode: forwards;
     }
 }
@@ -36,32 +40,32 @@ $time: 1s;
     border: $borderWidth solid black;
 
     &.columnFirst{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-40px -40px 0px -40px);
     }
 
     &.column{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-0px -40px 0px -40px);
     }
 
     &.columnLast{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-0px -40px -40px -40px);
     }
 
     &.rowFirst{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-40px 0px -40px -40px);
     }
 
     &.row{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-40px 0px -40px 0px);
     }
 
     &.rowLast{
-        box-shadow: 0px 0 15px 10px #f00;
+        // box-shadow: 0px 0 15px 10px #f00;
         clip-path: inset(-40px -40px -40px 0px);
     }
 
@@ -77,6 +81,57 @@ $time: 1s;
     &.isSixthRow{
         border-top: $borderWidth solid red;
     }
+
+    &::after{
+        content: '';
+        position: absolute;
+        z-index: -1;
+        width: calc(100% - #{$borderWidth});
+        height: calc(100% - #{$borderWidth});
+        opacity: 0;
+        //box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+        box-shadow: 0px 0px 15px 10px #f00;
+        //transition: opacity $time ease-in-out;
+        //animation: animBoxShadowOff $time ease-in-out;
+        //animation-direction: reverse;
+        //animation-fill-mode: backwards;
+    }
+
+    &.glowOff{
+        &::after{
+            animation: animBoxShadowOff $time ease-in-out;
+            animation-fill-mode: forwards;
+        }
+    }
+
+    &.glowOn{
+        &::after{
+            // content: '';
+            // position: absolute;
+            // z-index: -1;
+            // width: calc(100% - #{$borderWidth});
+            // height: calc(100% - #{$borderWidth});
+            //opacity: 1;
+            //box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+            // box-shadow: 0px 0px 15px 10px #f00;
+            //transition: opacity 0.3s ease-in-out;
+            animation: animBoxShadowOn $time ease-in-out;
+            animation-fill-mode: forwards;
+            //animation-fill-mode: forwards;
+        }
+    }
+
+
+}
+
+@keyframes animBoxShadowOff{
+    0%{opacity: 1}
+    100%{opacity: 0}
+}
+
+@keyframes animBoxShadowOn{
+    0%{opacity: 0}
+    100%{opacity: 1}
 }
 
 .similar{
@@ -91,11 +146,11 @@ $time: 1s;
     height: $height;
     //transform: scale(2.5);
     opacity: 0;
-    animation: anim $time ease-in-out;
+    animation: animCellContent $time ease-in-out;
     animation-fill-mode: forwards;
 }
 
-@keyframes anim{
+@keyframes animCellContent{
     0%{transform: scale(2.5); opacity: 0}
     100%{transform: scale(0.999); opacity: 1}
 }

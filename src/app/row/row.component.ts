@@ -6,7 +6,7 @@ import { RowData } from 'src/rowData';
   selector: 'row',
   styleUrls: ['./row.component.scss'],
   template: `
-    <div id="row" [class.rowIsBeingSolved]="thisRowIsBeingSolved">
+    <div id="row" [class.zIndex2]="thisRowIsBeingSolved || columnIsBeingSolved">
         <cell *ngFor="let cellData of rowData.cellDatas; let i = index"
             [cellData]="cellData"
             [similiar]="similarities ? similarities.includes(i) : false"
@@ -14,9 +14,7 @@ import { RowData } from 'src/rowData';
             [isSixthColumn]="(i) % 5 == 0 && i != 0"
             [isFithRow]="isFithRow"
             [isSixthRow]="isSixthRow"
-            [rowFirstGlow]="thisRowIsBeingSolved && i == 0"
-            [rowGlow]="thisRowIsBeingSolved && i > 0 && i < rowData.cellDatas.length - 1"
-            [rowLastGlow]="thisRowIsBeingSolved && i == rowData.cellDatas.length - 1"
+            [rowIsBeingSolved]="thisRowIsBeingSolved"
             [columnFirstGlow]="columnIsBeingSolved && columnIndexToSet == i && rowIndex == 0"
             [columnGlow]="columnIsBeingSolved && columnIndexToSet == i && rowIndex > 0 && !isLast"
             [columnLastGlow]="columnIsBeingSolved && columnIndexToSet == i && isLast"
@@ -24,7 +22,9 @@ import { RowData } from 'src/rowData';
             (contextmenu)="onCellRightClick(i)"
             (AnimationEnd)="onCellAnimationEnd()">
         </cell>
-    </div>  <!--  [columnFirstGlow]="columnIsBeingSolved && rowIndex == 0" && columnIndex == i -->
+    </div>  <!--  [rowFirstGlow]="thisRowIsBeingSolved && i == 0"
+            [rowGlow]="thisRowIsBeingSolved && i > 0 && i < rowData.cellDatas.length - 1"
+            [rowLastGlow]="thisRowIsBeingSolved && i == rowData.cellDatas.length - 1" -->
   `,
 })
 export class Row{
