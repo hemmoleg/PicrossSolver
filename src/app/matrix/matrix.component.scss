@@ -1,7 +1,14 @@
 #matrixContainer{
+    //width: 100%;
     display: flex;
     flex-wrap: wrap;
     &.isResult{
         margin-bottom: 2em;
     }
+
+    // cell{
+    //     width: 20%;
+    //     //height: 20%;
+    // }
+    
 }

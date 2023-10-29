@@ -22,16 +22,16 @@ body{
 }
 
 input{
-    width: 1em;
-    height: 1em;
+    width: 1em; //2.5vh
+    height: 1em; //2.5vh
     font-family: inherit;
     font-weight: 700;
     font-size: 1.7em;
 }
 
 button{
-    width: 1.3em;
-    height: 1.3em;
+    width: 1.3em; // 3.1vh;
+    height: 1.3em; // 3.1vh;
     background: $color-button-background;
     cursor: pointer;
     border: none;
